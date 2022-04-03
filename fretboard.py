@@ -12,6 +12,7 @@ import json
 import sys
 import re
 from lib import fretboard_lib as ft
+from lib import dxf2image
 # test at './input/json/test_fretboard.json'
 
 def show_params(params):
@@ -27,12 +28,18 @@ print("Ok")
 
 show_params(fretboard)
 
+print("calculating_frame")
+fretboard=ft.calculate_frame(fretboard)
+show_params(fretboard)
 ft.calculate_strings(fretboard)
-
 
 
 print("Print writting Freatboard JSON file to:"+sys.argv[2])
 with open(sys.argv[2],"w") as outfile:
     json.dump(fretboard, outfile)
+ft.generate_dxf(fretboard,"test.dxf")
+dxf2image.convert_dxf2img(["test.dxf"],"./output/png/")
+#dxf2image.convert_dxf2img([filename],"./output/pdf/", img_format=".pdf")
+
 
 print("Ok")
