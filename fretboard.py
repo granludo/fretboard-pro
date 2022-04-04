@@ -26,17 +26,14 @@ f = open(sys.argv[1], 'r')
 fretboard = json.load(f)
 print("Ok")
 
-show_params(fretboard)
 
-print("calculating_frame")
-fretboard=ft.calculate_frame(fretboard)
 show_params(fretboard)
-ft.calculate_strings(fretboard)
+ft.calculate(fretboard)
 
 
 print("Print writting Freatboard JSON file to:"+sys.argv[2])
 with open(sys.argv[2],"w") as outfile:
-    json.dump(fretboard, outfile)
+    json.dump(fretboard, outfile, indent=4)
 ft.generate_dxf(fretboard,"test.dxf")
 dxf2image.convert_dxf2img(["test.dxf"],"./output/png/")
 #dxf2image.convert_dxf2img([filename],"./output/pdf/", img_format=".pdf")
