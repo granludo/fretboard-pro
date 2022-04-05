@@ -1,13 +1,17 @@
-
+#ok let's try
 from numpy import *
 import ezdxf
 from ezdxf import units
 from lib import intersect
 
+
 x=0
 y=1
 left=0
 right=1
+
+def toinch(num):
+    return num#*25.4
 
 def calculate_space_between_strings_zero_line(fretboard):
     s=0;
@@ -97,7 +101,7 @@ def  generate_frame(msp,draw,fretboard):
 
     draw.draw_line_list(msp,fretboard["zero_line"],{"linetype":"DOT2"})
     draw.draw_line_list(msp,fretboard["bottom_line"],{"linetype":"DOT2"})
-    msp.add_text(str(fretboard["bottom_line"])+" mm").set_pos((-150,draw.transform(fretboard["bottom_line"][0][1])), align='LEFT')
+    draw.add_text(msp,str(fretboard["bottom_line"])+" mm",(-150,fretboard["bottom_line"][0][1]), 'LEFT')
     draw.draw_line_list(msp,fretboard["left_side"])
     draw.draw_line_list(msp,fretboard["right_side"])
     draw.draw_line_list(msp,[[0,-300],[0,900]],{"linetype":"CENTER"})
@@ -107,7 +111,7 @@ def  generate_frame(msp,draw,fretboard):
     if   fretboard["bridge_multiscale_compensation"]>0 :
         draw.draw_line_list(msp,
         [fretboard["comprensated_bridge"][1],[150,fretboard["comprensated_bridge"][1][1]]],{"linetype":"DOT2"})
-        msp.add_text("Compensation:"+str(fretboard["bridge_multiscale_compensation"])+" mm").set_pos((150,draw.transform(fretboard["comprensated_bridge"][1][1])), align='RIGHT')
+        draw.add_text(msp,"Compensation:"+str(fretboard["bridge_multiscale_compensation"])+" mm",(150,fretboard["comprensated_bridge"][1][1]), 'RIGHT')
 
     return
 
@@ -122,9 +126,10 @@ def generate_strings(msp,draw,fretboard):
 def generate_dxf(fretboard, fname) :
     doc = ezdxf.new('R12', setup=True)
 #    doc.header['$INSUNITS'] = 4 #sets units to milimeters
-    doc.units = units.MM
+    doc.units = units.IN
     msp = doc.modelspace()
     draw=draw_tool()
+    draw.draw_grid(msp)
     generate_frame(msp,draw,fretboard)
     generate_strings(msp,draw,fretboard)
     generate_frets(msp,draw,fretboard)
@@ -135,11 +140,11 @@ def generate_dxf(fretboard, fname) :
 def generate_frets(msp,draw,fretboard):
     for fret in fretboard["scale_positions"][left]:
         draw.draw_line(msp,-150,fret,-fretboard["width_at_bottom_line"]/2,fret,{"linetype":"DOT"})
-        msp.add_text(str(fret)+" mm").set_pos((-200,draw.transform(fret)), align='LEFT')
+        draw.add_text(msp,str(fret)+" mm",(-200,fret),'LEFT')
 
     for fret in fretboard["scale_positions"][right]:
         draw.draw_line(msp,fretboard["width_at_bottom_line"]/2,fret,150,fret,{"linetype":"DOT"})
-        msp.add_text(str(fret)+" mm").set_pos((160,draw.transform(fret)), align='RIGHT')
+        draw.add_text(msp,str(fret)+" mm",(160,fret), 'RIGHT')
     for fret in fretboard["frets_segments"]:
         draw.draw_line_list(msp,fret)
     return
@@ -208,21 +213,27 @@ class draw_tool:
     def __init__(self):
         self.flip_model=-1
 
+    def add_text(self,msp,string, pos, align_):
+        nga=msp.add_text(string)
+        nga.set_pos((toinch(pos[0]),toinch(self.transform(pos[1]))), align=align_)
+
+
     def transform(self,y):
         return self.offset+(y*self.flip_model)
 
     def draw_grid(self, msp):
-        if grid <0 :
-            return
         n=0
-        while n<600:
-            msp.add_line((-300, n), (300, n),dxfattribs={"linetype": "CENTER"}) #hoizontal grid
-            msp.add_line((0, n), (0, 0),dxfattribs={"linetype": "DOTTED"}) #vertical grid
-            n=n+self.grid
+        while n<20:
+            msp.add_line((-(500-(n*50)),-200),(-(500-(n*50)),1000),{"linetype":"DOT2"} )
+            msp.add_text(-(500-(n*50))).set_pos((-(500-(n*50)),-220), align="CENTER")
+            msp.add_text(-(500-(n*50))).set_pos((-(500-(n*50)),1020), align="CENTER")
+            n=n+1
 
     def draw_line(self,msp,x1,y1,x2,y2,atribs={"linetype":"CONTIUNUOUS"} ) :
-        y1=self.transform(y1)
-        y2=self.transform(y2)
+        y1=toinch(self.transform(y1))
+        y2=toinch(self.transform(y2))
+        x1=toinch(x1)
+        x2=toinch(x2)
         msp.add_line((x1,y1),(x2,y2),dxfattribs=atribs)
 
     def draw_line_list(self,msp,line,atribs={"linetype":"CONTIUNUOUS"}):

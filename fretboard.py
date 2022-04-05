@@ -11,7 +11,7 @@ import ezdxf
 import json
 import sys
 import re
-from lib import fretboard_lib as ft
+from lib import fretboard_lib_in as ft
 from lib import dxf2image
 # test at './input/json/test_fretboard.json'
 
@@ -24,10 +24,10 @@ print("Fretboard Generator by Marc Alier (c)2022")
 print("Reading Fretboard File from:"+sys.argv[1])
 f = open(sys.argv[1], 'r')
 fretboard = json.load(f)
-print("Ok")
+print("Json Load Ok")
 
 
-show_params(fretboard)
+#show_params(fretboard)
 ft.calculate(fretboard)
 
 
@@ -36,7 +36,7 @@ with open(sys.argv[2],"w") as outfile:
     json.dump(fretboard, outfile, indent=4)
 ft.generate_dxf(fretboard,"test.dxf")
 dxf2image.convert_dxf2img(["test.dxf"],"./output/png/")
-#dxf2image.convert_dxf2img([filename],"./output/pdf/", img_format=".pdf")
+dxf2image.convert_dxf2img(["test.dxf"],"./output/pdf/", img_format=".pdf")
 
 
 print("Ok")
