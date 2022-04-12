@@ -1,0 +1,15 @@
+{
+  "about": "Fretboard Definition format, by Marc Alier https://aprendideluthier.com 2022",
+  "fretboard_name": "española ",
+  "version":0.1,
+  "scale_left": 650,
+  "scale_right": 650,
+  "number_of_frets":24,
+  "width_at_zero_line":51,
+  "width_at_bottom_line":70,
+  "left_border":3,
+  "right_border":3,
+  "bridge_spacing_compensated":1 ,
+  "strings": [0.043, 0.035, 0.029, 0.0403, 0.0322, 0.028],
+  "fret_perpenticular_to_centerline":12
+}
