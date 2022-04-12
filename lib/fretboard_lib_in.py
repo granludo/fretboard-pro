@@ -1,17 +1,28 @@
 #ok let's try
+from __future__ import annotations
 from numpy import *
 import ezdxf
 from ezdxf import units
 from lib import intersect
-
+from pathlib import Path
+import matplotlib.pyplot as plt
+from ezdxf.addons.drawing import RenderContext, Frontend
+from ezdxf.addons.drawing.matplotlib import MatplotlibBackend
+from ezdxf.math import Vec2
+from ezdxf.enums import TextEntityAlignment, MTextEntityAlignment
+import json
 
 x=0
 y=1
 left=0
 right=1
+inch_x_mm =25.4
 
-def toinch(num):
-    return num#*25.4
+def toinch(num,convert=0):
+    if convert!=0:
+        return num/inch_x_mm
+    else:
+        return num
 
 def calculate_space_between_strings_zero_line(fretboard):
     s=0;
@@ -101,7 +112,7 @@ def  generate_frame(msp,draw,fretboard):
 
     draw.draw_line_list(msp,fretboard["zero_line"],{"linetype":"DOT2"})
     draw.draw_line_list(msp,fretboard["bottom_line"],{"linetype":"DOT2"})
-    draw.add_text(msp,str(fretboard["bottom_line"])+" mm",(-150,fretboard["bottom_line"][0][1]), 'LEFT')
+    #draw.add_text(msp,str(round(fretboard["bottom_line"][0][1],2))+" mm",(-100,fretboard["bottom_line"][0][1]), 'LEFT')
     draw.draw_line_list(msp,fretboard["left_side"])
     draw.draw_line_list(msp,fretboard["right_side"])
     draw.draw_line_list(msp,[[0,-300],[0,900]],{"linetype":"CENTER"})
@@ -110,9 +121,10 @@ def  generate_frame(msp,draw,fretboard):
     draw.draw_line_list(msp,fretboard["comprensated_bridge"])
     if   fretboard["bridge_multiscale_compensation"]>0 :
         draw.draw_line_list(msp,
-        [fretboard["comprensated_bridge"][1],[150,fretboard["comprensated_bridge"][1][1]]],{"linetype":"DOT2"})
-        draw.add_text(msp,"Compensation:"+str(fretboard["bridge_multiscale_compensation"])+" mm",(150,fretboard["comprensated_bridge"][1][1]), 'RIGHT')
-
+        [fretboard["comprensated_bridge"][1],[100,fretboard["comprensated_bridge"][1][1]]],{"linetype":"DOT2"})
+        draw.add_text(msp,"Compensation:"+str(round(fretboard["bridge_multiscale_compensation"],2))+" mm",(150,fretboard["comprensated_bridge"][1][1]), 'RIGHT')
+    draw.add_text(msp,str(round(fretboard["comprensated_bridge"][1][1],2))+" mm",(100,fretboard["comprensated_bridge"][1][1]), 'LEFT')
+    draw.add_text(msp,str(round(fretboard["comprensated_bridge"][0][1],2))+" mm",(-100,fretboard["comprensated_bridge"][0][1]), 'LEFT')
     return
 
 
@@ -123,28 +135,16 @@ def generate_strings(msp,draw,fretboard):
         draw.draw_line_list(msp,string,{"linetype":"DASHED2"})
     return
 
-def generate_dxf(fretboard, fname) :
-    doc = ezdxf.new('R12', setup=True)
-#    doc.header['$INSUNITS'] = 4 #sets units to milimeters
-    doc.units = units.IN
-    msp = doc.modelspace()
-    draw=draw_tool()
-    draw.draw_grid(msp)
-    generate_frame(msp,draw,fretboard)
-    generate_strings(msp,draw,fretboard)
-    generate_frets(msp,draw,fretboard)
-#    draw.draw_line(msp,1,1,100,100)
-    doc.saveas(fname)
-    return
+
 
 def generate_frets(msp,draw,fretboard):
     for fret in fretboard["scale_positions"][left]:
         draw.draw_line(msp,-150,fret,-fretboard["width_at_bottom_line"]/2,fret,{"linetype":"DOT"})
-        draw.add_text(msp,str(fret)+" mm",(-200,fret),'LEFT')
+        draw.add_text(msp,str(round(fret,3))+" mm",(-100,fret),'LEFT')
 
     for fret in fretboard["scale_positions"][right]:
         draw.draw_line(msp,fretboard["width_at_bottom_line"]/2,fret,150,fret,{"linetype":"DOT"})
-        draw.add_text(msp,str(fret)+" mm",(160,fret), 'RIGHT')
+        draw.add_text(msp,str(round(fret,3))+" mm",(110,fret), 'RIGHT')
     for fret in fretboard["frets_segments"]:
         draw.draw_line_list(msp,fret)
     return
@@ -205,35 +205,156 @@ def calculate_frets_segments(fretboard):
     fretboard["comprensated_bridge"]=bridge
     return fretboard
 
+def generate_dxf(fretboard, fname) :
+    doc = ezdxf.new(setup=True)
+#    doc.header['$INSUNITS'] = 4 #sets units to milimeters
+    doc.units = units.MM
+    inch_x_mm =1
+    msp = doc.modelspace()
+    draw=draw_tool()
+#    draw.draw_grid(msp)
+    generate_frame(msp,draw,fretboard)
+    generate_strings(msp,draw,fretboard)
+    generate_frets(msp,draw,fretboard)
+#    draw.draw_line(msp,1,1,100,100)
+    doc.saveas(fname)
+    return
+################################################
+def make_doc(fretboard,offset=(0, 0), size=(3, 4)):
+    doc = ezdxf.new(setup=True)
+    msp = doc.modelspace()
+    inch_x_mm =25.4
+    draw=draw_tool()
+    draw.convert=1
+    #draw.draw_grid(msp)
+    generate_frame(msp,draw,fretboard)
+    generate_strings(msp,draw,fretboard)
+    generate_frets(msp,draw,fretboard)
+
+    x, y = offset
+    sx, sy = size
+#    red_dashed = {"color": 1, "linetype": "dashed"}
+    #msp.add_line((-100, 5), (100, 5), dxfattribs=red_dashed)
+#    msp.add_line((6, -100), (6, 100), dxfattribs=red_dashed)
+    #msp.add_lwpolyline(
+    #    [(x, y), (x + sx, y), (x + sx, y + sy), (x, y + sy)], close=True
+    #)
+    center = Vec2(offset) + Vec2(size) * 0.5
+    #msp.add_text(
+    #    f"{size[0]:.1f} inch x {size[1]:.1f} inch ",
+    #    height=0.25,
+    #    dxfattribs={"style": "OpenSans"},
+    #).set_placement(center, align=TextEntityAlignment.MIDDLE_CENTER)
+    return doc
+
+
+
+
+
+def render_limits(
+    origin: tuple[float, float],
+    size_in_inches: tuple[float, float],
+    scale: float,
+) -> tuple[float, float, float, float]:
+    """Returns the render limits in drawing units. """
+    min_x, min_y = origin
+    max_x = min_x + size_in_inches[0] * scale
+    max_y = min_y + size_in_inches[1] * scale
+    return min_x, min_y, max_x, max_y
+
+def describe(fretboard) :
+    return ("scale left:"+str(fretboard["scale_left"])+
+            "\nscale right:"+str(fretboard["scale_right"])+
+            "\nwidth at zero line:"+str(fretboard["width_at_zero_line"])+
+            "\nwidth at bottom line:"+str(fretboard["width_at_bottom_line"])+
+            "\nperpenticular fret:"+str(fretboard["fret_perpenticular_to_centerline"])+
+            "\nstrings (inches):"+str(fretboard["strings"])
+            )
+
+def save_to_scale(fretboard,
+    size_in_inches: tuple[float, float] = (300/25.4, 1000/25,4),
+    origin: tuple[float, float] = (0, 0),  # of modelspace area to render
+    scale: float = 1,
+    dpi: int = 300,
+    filename="filename.pdf",
+
+):
+    doc = make_doc(fretboard,offset=(1, 2), size=(6.5, 8))
+    msp = doc.modelspace()
+    msp.add_mtext(
+        "Fretboard Generator by Marc Alier 2022\n"
+        +"https://aprendizdeluthier.com\n"+"Fretboard diagram Scale 1:1\n\nParameters:\n"+
+
+        describe(fretboard)
+
+        ,
+        dxfattribs={"style": "OpenSans", "char_height": 0.13},
+    ).set_location(
+        (0.2, 1), attachment_point=MTextEntityAlignment.BOTTOM_LEFT
+    )
+
+    ctx = RenderContext(doc)
+    fig = plt.figure(dpi=dpi)
+    ax = fig.add_axes([0, 0, 1, 1])
+
+    # Get render limits in drawing units:
+    min_x, min_y, max_x, max_y = render_limits(
+        origin, size_in_inches, scale
+    )
+## added by lud
+    ezdxf.addons.drawing.properties.MODEL_SPACE_BG_COLOR = '#FFFFFF'
+    ax.set_xlim(min_x, max_x)
+    ax.set_ylim(min_y, max_y)
+
+    out = MatplotlibBackend(ax)
+    # Finalizing invokes auto-scaling by default!
+    Frontend(ctx, out).draw_layout(msp, finalize=False)
+
+    # Set output size in inches:
+    fig.set_size_inches(size_in_inches[0], size_in_inches[1], forward=True)
+    fig.savefig(filename, dpi=dpi)
+    plt.close(fig)
+
+####################################################################
 class draw_tool:
     #silly class implemented for rendering nicelly, original coords mean 0,0 is at the nut
+    convert = 0
     flip_model=-1
     offset= 750 # arbitrary number
     grid = 5
     def __init__(self):
         self.flip_model=-1
 
-    def add_text(self,msp,string, pos, align_):
-        nga=msp.add_text(string)
-        nga.set_pos((toinch(pos[0]),toinch(self.transform(pos[1]))), align=align_)
+    def add_text(self,msp,palangana, pos, align_):
+        pos=[pos[0]+150,self.transform(pos[1])]
+        print(palangana)
+        msp.add_mtext(palangana,dxfattribs={"style": "OpenSans", "char_height": 0.10}).set_location((toinch(pos[0],self.convert),toinch(pos[1],self.convert)))
 
 
     def transform(self,y):
         return self.offset+(y*self.flip_model)
 
     def draw_grid(self, msp):
+        red_dashed = {"color": 1, "linetype": "dashed"}
+        #msp.add_line((-100, 5), (100, 5), dxfattribs=red_dashed)
+        msp.add_line((80, -100), (6, 100), dxfattribs=red_dashed)
         n=0
-        while n<20:
-            msp.add_line((-(500-(n*50)),-200),(-(500-(n*50)),1000),{"linetype":"DOT2"} )
-            msp.add_text(-(500-(n*50))).set_pos((-(500-(n*50)),-220), align="CENTER")
-            msp.add_text(-(500-(n*50))).set_pos((-(500-(n*50)),1020), align="CENTER")
+        while n<9:
+            msp.add_line(
+            (
+                toinch(n*50,self.convert) ,toinch(20,self.convert)),
+                (toinch(n*50,self.convert),toinch(1200,self.convert)
+            ),{"linetype":"DOT2"} )
+            msp.add_mtext((n*50),dxfattribs={"style": "OpenSans", "char_height": 0.25}).set_location((toinch(n*50,self.convert),toinch(10,self.convert)))
+            msp.add_mtext((n*50),dxfattribs={"style": "OpenSans", "char_height": 0.25}).set_location((toinch(n*50,self.convert),toinch(1210,self.convert)))
             n=n+1
 
     def draw_line(self,msp,x1,y1,x2,y2,atribs={"linetype":"CONTIUNUOUS"} ) :
-        y1=toinch(self.transform(y1))
-        y2=toinch(self.transform(y2))
-        x1=toinch(x1)
-        x2=toinch(x2)
+        y1=toinch(self.transform(y1),self.convert)
+        y2=toinch(self.transform(y2),self.convert)
+        x1=toinch(x1+150,self.convert)
+        x2=toinch(x2+150,self.convert)
+    #    print("draw_line:"+str([x1,y1,x2,y2]))
         msp.add_line((x1,y1),(x2,y2),dxfattribs=atribs)
 
     def draw_line_list(self,msp,line,atribs={"linetype":"CONTIUNUOUS"}):

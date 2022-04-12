@@ -24,7 +24,10 @@ def convert_dxf2img( names, folder, img_format=default_img_format, img_res=defau
             raise Exception("This DXF document is damaged and can't be converted! --> ", name)
             name = name =+ 1
         else :
+            cm = 1/2.54  # centimeters in inches
+            plt.subplots(figsize=(500*cm, 2000*cm))
             fig = plt.figure()
+            #fig = plt.figure(figsize=[40000, 40000])
             ax = fig.add_axes([0, 0, 1, 1])
             ctx = RenderContext(doc)
             ctx.set_current_layout(msp)
@@ -35,7 +38,7 @@ def convert_dxf2img( names, folder, img_format=default_img_format, img_res=defau
             img_name = re.findall("(\S+)\.",name)  # select the image name that is the same as the dxf file name
             first_param = ''.join(img_name) + img_format  #concatenate list and string
             first_param=folder+os.path.basename(first_param)
-            fig.savefig(first_param, dpi=img_res)
+            fig.savefig(first_param, dpi=img_res,size_inches= [500*cm, 2000*cm] )
             print(name," Converted Successfully")
 
 

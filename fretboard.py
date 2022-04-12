@@ -35,8 +35,9 @@ print("Print writting Freatboard JSON file to:"+sys.argv[2])
 with open(sys.argv[2],"w") as outfile:
     json.dump(fretboard, outfile, indent=4)
 ft.generate_dxf(fretboard,"test.dxf")
-dxf2image.convert_dxf2img(["test.dxf"],"./output/png/")
-dxf2image.convert_dxf2img(["test.dxf"],"./output/pdf/", img_format=".pdf")
+ft.save_to_scale(fretboard,scale=1,filename="test.pdf")
+#dxf2image.convert_dxf2img(["test.dxf"],"./output/png/")
+#dxf2image.convert_dxf2img(["test.dxf"],"./output/pdf/", img_format=".pdf")
 
 
 print("Ok")
