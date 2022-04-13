@@ -19,8 +19,8 @@
         0.01
     ],
     "fret_perpenticular_to_centerline": 12,
-    "intonation_compensation_left": 3,
-    "intonation_compensation_right": 1,
+    "intonation_compensation_left": -3,
+    "intonation_compensation_right": -1,
     "zero_line": [
         [
             -21.59,
@@ -486,16 +486,6 @@
         [
             28.710718749999998,
             634.0
-        ]
-    ],
-    "intonated_bridge": [
-        [
-            -28.355800000000002,
-            643.0
-        ],
-        [
-            28.710718749999998,
-            635.0
         ]
     ]
 }

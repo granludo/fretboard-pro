@@ -17,6 +17,26 @@ y=1
 left=0
 right=1
 inch_x_mm =25.4
+lang={
+    "Diapasón multiescala":"Diapasón multiescala",
+    "Escala Izquierda: ":"Escala Izquierda: ",
+    "Escala Derecha: ":"Escala Derecha: ",
+    "Traste Perpenticular: ":"Traste Perpenticular: ",
+    "Escala: ":"Escala: ",
+    "Trastes: ":"Trastes: ",
+    "Ancho en Cejuela (centro cuerda E a centro cuerda e): ":
+        "Ancho en Cejuela \n   (centro cuerda E a centro cuerda e):  ",
+    "Ancho en Puente (centro cuerda a centro cuerda)":
+        "Ancho en Puente \n   (centro cuerda a centro cuerda): ",
+    "Borde izquierdo: ":"Borde izquierdo: ",
+    "Borde derecho: ":"Borde derecho: ",
+    "Cuerdas: ":"Cuerdas: ",
+    "Cordaje: ":"Cordaje: ",
+    "Compensation:":"Compensación multiescala:",
+    "Puente con entonación":"Puente con entonación",
+    "Compensación entonación izquierda":"Compensación entonación izquierda",
+    "Compensación entonación derecha":"Compensación entonación derecha"
+}
 
 def toinch(num,convert=0):
     if convert!=0:
@@ -119,10 +139,21 @@ def  generate_frame(msp,draw,fretboard):
     draw.draw_line_list(msp,fretboard["left_border_line"],{"linetype":"DOT2"})
     draw.draw_line_list(msp,fretboard["right_border_line"],{"linetype":"DOT2"})
     draw.draw_line_list(msp,fretboard["comprensated_bridge"])
+    draw.draw_line_list(msp,fretboard["intonated_bridge"])
+    draw.draw_line_list(msp,
+        [
+            fretboard["intonated_bridge"][0],
+            [fretboard["intonated_bridge"][0][0],fretboard["intonated_bridge"][0][1]+10]
+        ],{"linetype":"DOT2"})
+    draw.add_text(msp,lang["Puente con entonación"],(fretboard["comprensated_bridge"][0][0],fretboard["comprensated_bridge"][0][1]+10), 'LEFT')
+
     if   fretboard["bridge_multiscale_compensation"]>0 :
         draw.draw_line_list(msp,
         [fretboard["comprensated_bridge"][1],[100,fretboard["comprensated_bridge"][1][1]]],{"linetype":"DOT2"})
-        draw.add_text(msp,"Compensation:"+str(round(fretboard["bridge_multiscale_compensation"],2))+" mm",(150,fretboard["comprensated_bridge"][1][1]), 'RIGHT')
+        text=lang["Compensation:"]+str(round(fretboard["bridge_multiscale_compensation"],2))+" mm"
+        draw.add_text(msp,text,(100,fretboard["comprensated_bridge"][1][1]+5), 'LEFT')
+    draw.draw_line_list(msp,
+    [fretboard["comprensated_bridge"][0],[-150,fretboard["comprensated_bridge"][0][1]]],{"linetype":"DOT2"})
     draw.add_text(msp,str(round(fretboard["comprensated_bridge"][1][1],2))+" mm",(100,fretboard["comprensated_bridge"][1][1]), 'LEFT')
     draw.add_text(msp,str(round(fretboard["comprensated_bridge"][0][1],2))+" mm",(-100,fretboard["comprensated_bridge"][0][1]), 'LEFT')
     return
@@ -130,21 +161,40 @@ def  generate_frame(msp,draw,fretboard):
 
 def generate_strings(msp,draw,fretboard):
     for string in fretboard["strings_segments"]:
-        draw.draw_line_list(msp,string,{"linetype":"DASHED2"})
+        draw.draw_line_list(msp,string,{"linetype":"DASHED"})
     for string in fretboard["extended_strings_segments"]:
         draw.draw_line_list(msp,string,{"linetype":"DASHED2"})
+    n=0
+    strings=fretboard["strings"]
+    nut=fretboard["frets_segments"][0]
+    while n<len(strings):
+        string=fretboard["strings_segments"][n]
+        p1 = array( string[0])
+        p2 = array( string[1])
+        p3 = array( nut[0])
+        p4 = array( nut[1])
+        point = intersect.seg_intersect( p1,p2, p3,p4)
+
+
+        #draw.draw_line(msp,0,0,string[0][0],string[0][1])
+        draw.draw_circle(msp,point, strings[n]*25.4)
+        n=n+1
     return
 
 
 
 def generate_frets(msp,draw,fretboard):
+    n=0
     for fret in fretboard["scale_positions"][left]:
         draw.draw_line(msp,-150,fret,-fretboard["width_at_bottom_line"]/2,fret,{"linetype":"DOT"})
-        draw.add_text(msp,str(round(fret,3))+" mm",(-100,fret),'LEFT')
+        draw.add_text(msp,str(n)+" : "+str(round(fret,3))+" mm",(-100,fret),'LEFT')
+        n=n+1
 
+    n=0
     for fret in fretboard["scale_positions"][right]:
         draw.draw_line(msp,fretboard["width_at_bottom_line"]/2,fret,150,fret,{"linetype":"DOT"})
-        draw.add_text(msp,str(round(fret,3))+" mm",(110,fret), 'RIGHT')
+        draw.add_text(msp,str(n)+" : "+str(round(fret,3))+" mm",(110,fret), 'RIGHT')
+        n=n+1
     for fret in fretboard["frets_segments"]:
         draw.draw_line_list(msp,fret)
     return
@@ -203,6 +253,12 @@ def calculate_frets_segments(fretboard):
 
     fretboard["frets_segments"]=frets_segments
     fretboard["comprensated_bridge"]=bridge
+    bridge2=[
+        [bridge[0][0],bridge[0][1]],[bridge[1][0],bridge[1][1]]
+    ]
+    bridge2[0][1]=bridge[0][1]+fretboard["intonation_compensation_left"]
+    bridge2[1][1]=bridge[1][1]+fretboard["intonation_compensation_right"]
+    fretboard["intonated_bridge"]=bridge2
     return fretboard
 
 def generate_dxf(fretboard, fname) :
@@ -263,13 +319,42 @@ def render_limits(
     return min_x, min_y, max_x, max_y
 
 def describe(fretboard) :
-    return ("scale left:"+str(fretboard["scale_left"])+
+    nga=("scale left:"+str(fretboard["scale_left"])+
             "\nscale right:"+str(fretboard["scale_right"])+
             "\nwidth at zero line:"+str(fretboard["width_at_zero_line"])+
             "\nwidth at bottom line:"+str(fretboard["width_at_bottom_line"])+
             "\nperpenticular fret:"+str(fretboard["fret_perpenticular_to_centerline"])+
             "\nstrings (inches):"+str(fretboard["strings"])
             )
+    return fretboard_specs(fretboard)
+
+def fretboard_specs(fretboard):
+    cadena=""
+    newline="\n"
+    #cadena=cadena+str(fretboard["about"])+newline
+    cadena=cadena+str(fretboard["fretboard_name"])+newline
+
+    if fretboard["scale_left"]!=fretboard["scale_right"]:
+        cadena=cadena+lang["Diapasón multiescala"]+newline
+        cadena=cadena+lang["Escala Izquierda: "]+ str(fretboard["scale_left"])+ newline
+        cadena=cadena+lang["Escala Derecha: "]+ str(fretboard["scale_right"])+newline
+        cadena=cadena+lang["Traste Perpenticular: "]+ str(fretboard["fret_perpenticular_to_centerline"])+newline
+
+    else :
+        cadena=cadena+lang["Escala: "]+ str(fretboard["scale_left"])+ newline
+    cadena=cadena+lang["Trastes: "]+str(fretboard["number_of_frets"])+newline
+    cadena=cadena+ lang["Ancho en Cejuela (centro cuerda E a centro cuerda e): "]+str(fretboard["width_at_zero_line"])+newline+   lang["Ancho en Puente (centro cuerda a centro cuerda)"]+ str(fretboard["width_at_bottom_line"])+newline
+    cadena=cadena+lang["Borde izquierdo: "]+str(fretboard["left_border"])+newline
+    cadena=cadena+lang["Borde derecho: "]+str(fretboard["right_border"])+newline
+    cadena=cadena+lang["Cuerdas: "]+str(len(fretboard["strings"]))+newline
+    cadena=cadena+lang["Cordaje: "]+str(fretboard["strings"])+newline
+    cadena=cadena+lang["Compensación entonación izquierda"]+str(fretboard["intonation_compensation_left"])+newline
+    cadena=cadena+lang["Compensación entonación derecha"]+str(fretboard["intonation_compensation_right"])+newline
+
+
+#      "strings": [0.046, 0.036, 0.026, 0.017, 0.013, 0.010],
+#      "fret_perpenticular_to_centerline":12
+    return cadena
 
 def save_to_scale(fretboard,
     size_in_inches: tuple[float, float] = (300/25.4, 1000/25,4),
@@ -282,15 +367,19 @@ def save_to_scale(fretboard,
     doc = make_doc(fretboard,offset=(1, 2), size=(6.5, 8))
     msp = doc.modelspace()
     msp.add_mtext(
-        "Fretboard Generator by Marc Alier 2022\n"
-        +"https://aprendizdeluthier.com\n"+"Fretboard diagram Scale 1:1\n\nParameters:\n"+
-
-        describe(fretboard)
-
+        "Fretboard Generator \nby Marc Alier 2022 \n"
+        +"https://aprendizdeluthier.com\nScale 1:1"
         ,
-        dxfattribs={"style": "OpenSans", "char_height": 0.13},
+        dxfattribs={"style": "OpenSans", "char_height": 0.22},
     ).set_location(
-        (0.2, 1), attachment_point=MTextEntityAlignment.BOTTOM_LEFT
+        (0.2, 38), attachment_point=MTextEntityAlignment.BOTTOM_LEFT
+    )
+
+    msp.add_mtext(
+    describe(fretboard),
+    dxfattribs={"style": "OpenSans", "char_height": 0.13},
+    ).set_location(
+        (0.2, 33), attachment_point=MTextEntityAlignment.BOTTOM_LEFT
     )
 
     ctx = RenderContext(doc)
@@ -327,7 +416,6 @@ class draw_tool:
 
     def add_text(self,msp,palangana, pos, align_):
         pos=[pos[0]+150,self.transform(pos[1])]
-        print(palangana)
         msp.add_mtext(palangana,dxfattribs={"style": "OpenSans", "char_height": 0.10}).set_location((toinch(pos[0],self.convert),toinch(pos[1],self.convert)))
 
 
@@ -348,14 +436,21 @@ class draw_tool:
             msp.add_mtext((n*50),dxfattribs={"style": "OpenSans", "char_height": 0.25}).set_location((toinch(n*50,self.convert),toinch(10,self.convert)))
             msp.add_mtext((n*50),dxfattribs={"style": "OpenSans", "char_height": 0.25}).set_location((toinch(n*50,self.convert),toinch(1210,self.convert)))
             n=n+1
+        return
+
+    def draw_circle(self,msp,centre,radi):
+        x=toinch(centre[0]+150,self.convert)
+        y=toinch(self.transform(centre[1]),self.convert)
+        msp.add_circle((x,y), radius=toinch(radi,self.convert))
+        return
 
     def draw_line(self,msp,x1,y1,x2,y2,atribs={"linetype":"CONTIUNUOUS"} ) :
         y1=toinch(self.transform(y1),self.convert)
         y2=toinch(self.transform(y2),self.convert)
         x1=toinch(x1+150,self.convert)
         x2=toinch(x2+150,self.convert)
-    #    print("draw_line:"+str([x1,y1,x2,y2]))
         msp.add_line((x1,y1),(x2,y2),dxfattribs=atribs)
+        return
 
     def draw_line_list(self,msp,line,atribs={"linetype":"CONTIUNUOUS"}):
         self.draw_line(msp,line[0][0],line[0][1],line[1][0],line[1][1],atribs=atribs)
