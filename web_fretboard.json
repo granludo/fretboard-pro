@@ -1,0 +1,28 @@
+{
+   "about": "Fretboard Definition format, by Marc Alier https://aprendideluthier.com 2022",
+   "fretboard_name": "Guitarra Ludo",
+   "version": 0.1,
+   "scale_left": 650.0,
+   "scale_right": 625.0,
+   "number_of_frets": 23,
+   "width_at_zero_line": 58.0,
+   "width_at_bottom_line": 76.0,
+   "left_border": 3.56,
+   "right_border": 3.56,
+   "bridge_spacing_compensated": 1,
+   "strings": [
+      0.074,
+      0.064,
+      0.052,
+      0.042,
+      0.03,
+      0.018,
+      0.014
+   ],
+   "fret_perpenticular_to_centerline": 12,
+   "intonation_compensation_left": 3,
+   "intonation_compensation_right": 1,
+   "left border": 0,
+   "right border": 0,
+   "left boder": 0
+}

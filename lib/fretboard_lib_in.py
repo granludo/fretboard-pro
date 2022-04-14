@@ -17,7 +17,7 @@ y=1
 left=0
 right=1
 inch_x_mm =25.4
-lang={
+lang_es={
     "Diapasón multiescala":"Diapasón multiescala",
     "Escala Izquierda: ":"Escala Izquierda: ",
     "Escala Derecha: ":"Escala Derecha: ",
@@ -37,6 +37,27 @@ lang={
     "Compensación entonación izquierda":"Compensación entonación izquierda",
     "Compensación entonación derecha":"Compensación entonación derecha"
 }
+lang_en={
+    "Diapasón multiescala":"Mulstiscale (FAN) fretboard",
+    "Escala Izquierda: ":"Left Scale: ",
+    "Escala Derecha: ":"Right Scale: ",
+    "Traste Perpenticular: ":"Perpenticular Fret: ",
+    "Escala: ":"Scale: ",
+    "Trastes: ":"Frets: ",
+    "Ancho en Cejuela (centro cuerda E a centro cuerda e): ":
+        "Width at NUT \n   (string center to string center:  ",
+    "Ancho en Puente (centro cuerda a centro cuerda)":
+        "Width at NUT \n   (string center to string center):  ",
+    "Borde izquierdo: ":"Left overhang: ",
+    "Borde derecho: ":"Right overhang: ",
+    "Cuerdas: ":"Strings: ",
+    "Cordaje: ":"Gauges: ",
+    "Compensation:":"Mulstiscale compensation:",
+    "Puente con entonación":"Intonatted bridge",
+    "Compensación entonación izquierda":"Left intonnation",
+    "Compensación entonación derecha":"Right intonnation"
+}
+
 
 def toinch(num,convert=0):
     if convert!=0:
@@ -143,15 +164,15 @@ def  generate_frame(msp,draw,fretboard):
     draw.draw_line_list(msp,
         [
             fretboard["intonated_bridge"][0],
-            [fretboard["intonated_bridge"][0][0],fretboard["intonated_bridge"][0][1]+10]
+            [fretboard["intonated_bridge"][0][0],fretboard["intonated_bridge"][0][1]+40]
         ],{"linetype":"DOT2"})
-    draw.add_text(msp,lang["Puente con entonación"],(fretboard["comprensated_bridge"][0][0],fretboard["comprensated_bridge"][0][1]+10), 'LEFT')
+    draw.add_text(msp,"Puente con entonación/Intonated Bridge",(fretboard["comprensated_bridge"][0][0],fretboard["comprensated_bridge"][0][1]+40), 'LEFT')
 
     if   fretboard["bridge_multiscale_compensation"]>0 :
         draw.draw_line_list(msp,
         [fretboard["comprensated_bridge"][1],[100,fretboard["comprensated_bridge"][1][1]]],{"linetype":"DOT2"})
-        text=lang["Compensation:"]+str(round(fretboard["bridge_multiscale_compensation"],2))+" mm"
-        draw.add_text(msp,text,(100,fretboard["comprensated_bridge"][1][1]+5), 'LEFT')
+        text="Compensación/Compensation:"+str(round(fretboard["bridge_multiscale_compensation"],2))+" mm"
+        draw.add_text(msp,text,(80,fretboard["comprensated_bridge"][1][1]+5), 'LEFT')
     draw.draw_line_list(msp,
     [fretboard["comprensated_bridge"][0],[-150,fretboard["comprensated_bridge"][0][1]]],{"linetype":"DOT2"})
     draw.add_text(msp,str(round(fretboard["comprensated_bridge"][1][1],2))+" mm",(100,fretboard["comprensated_bridge"][1][1]), 'LEFT')
@@ -326,9 +347,13 @@ def describe(fretboard) :
             "\nperpenticular fret:"+str(fretboard["fret_perpenticular_to_centerline"])+
             "\nstrings (inches):"+str(fretboard["strings"])
             )
-    return fretboard_specs(fretboard)
 
-def fretboard_specs(fretboard):
+    specs=fretboard_specs(fretboard,lang_es)
+    specs=specs+"\n\n\n"+fretboard_specs(fretboard,lang_en)
+    return specs
+
+
+def fretboard_specs(fretboard,lang):
     cadena=""
     newline="\n"
     #cadena=cadena+str(fretboard["about"])+newline
@@ -374,12 +399,19 @@ def save_to_scale(fretboard,
     ).set_location(
         (0.2, 38), attachment_point=MTextEntityAlignment.BOTTOM_LEFT
     )
-
+    msp.add_mtext(
+        "Fretboard Generator \nby Marc Alier 2022 \n"
+        +"https://aprendizdeluthier.com"
+        ,
+        dxfattribs={"style": "OpenSans", "char_height": 0.22},
+        ).set_location(
+            (0.2, 1), attachment_point=MTextEntityAlignment.BOTTOM_LEFT
+        )
     msp.add_mtext(
     describe(fretboard),
     dxfattribs={"style": "OpenSans", "char_height": 0.13},
     ).set_location(
-        (0.2, 33), attachment_point=MTextEntityAlignment.BOTTOM_LEFT
+        (0.2, 30), attachment_point=MTextEntityAlignment.BOTTOM_LEFT
     )
 
     ctx = RenderContext(doc)

@@ -19,7 +19,7 @@ def show_params(params):
     for param in params:
         print(param+":"+str(params[param]))
 
-print("Usage:python3 fretboard.py inputfile.json outputname(no extension)")
+print("Usage:python3 fretboard.py inputfile.json folder")
 print("Fretboard Generator by Marc Alier (c)2022")
 print("Reading Fretboard File from:"+sys.argv[1])
 f = open(sys.argv[1], 'r')
@@ -34,8 +34,8 @@ ft.calculate(fretboard)
 print("Print writting Freatboard JSON file to:"+sys.argv[2])
 with open("./output/json/"+sys.argv[2]+".json","w") as outfile:
     json.dump(fretboard, outfile, indent=4)
-ft.generate_dxf(fretboard,"./output/dxf/"+sys.argv[2]+".dxf")
-ft.save_to_scale(fretboard,scale=1,filename="./output/pdf/"+sys.argv[2]+".pdf")
-ft.save_to_scale(fretboard,scale=1,filename="./output/png/"+sys.argv[2]+".png")
+ft.generate_dxf(fretboard,"./output/"+sys.argv[2]+".dxf")
+ft.save_to_scale(fretboard,scale=1,filename="./output/"+sys.argv[2]+".pdf")
+#ft.save_to_scale(fretboard,scale=1,filename="./output/"+sys.argv[2]+".png")
 
 print("Ok")
