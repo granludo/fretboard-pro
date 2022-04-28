@@ -1,5 +1,5 @@
 #ok let's try
-#from __future__ import annotations
+from __future__ import annotations
 from numpy import *
 import ezdxf
 from ezdxf import units
@@ -391,6 +391,7 @@ def save_to_scale(fretboard,
 ):
     doc = make_doc(fretboard,offset=(1, 2), size=(6.5, 8))
     msp = doc.modelspace()
+    print("shit:"+str(MTextEntityAlignment.BOTTOM_LEFT))
     msp.add_mtext(
         "Fretboard Generator \nby Marc Alier 2022 \n"
         +"https://aprendizdeluthier.com\nScale 1:1"
