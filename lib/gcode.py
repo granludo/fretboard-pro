@@ -19,9 +19,7 @@ TOOL_1 = 1 # 1 mm diameter flat bit
 TOOL_0_5 = 0.5 # 0.5 mm diameter flat bit
 G_COMMENT = "// "
 
-SAMPLE_RECTANGLE = (
-    (-30,40),(30,50)
-) #always from bottom left to top right !
+
 
 class gcode_gen:
 ## gcode_gen encapsulates the file where the gcode is output
@@ -37,29 +35,84 @@ class gcode_gen:
     clearance_height = 40 # in mm
     stepdown = 0.5 # in mm
     tool = TOOL_8
+    overstep = 0.2
 
-    def self.2d_pocket_on_x(rectangle,leftover):
+    def contour_rectangle(self,pocket_top, pocket_bottom, rectangle, leftover=0):
+        if (pocket_top<=pocket_bottom):
+            self.write(G_COMMENT+" pocket_on_x() Error Top "+pocket_top+ "equal or under bottom "+self.bottom)
+            exit()
+        if (pocket_top>=self.clearance_height):
+            self.write(G_COMMENT+" pocket_on_x() Error Top "+pocket_top+ "equal or over clearance "+self.clearance_height)
+            exit()
+        self.write("G1 Z"+str(self.clearance_height))
+        z=pocket_top+self.stepdown
+        x1=rectangle[0][0]-(self.tool/2)-leftover
+        y1=rectangle[0][1]-(self.tool/2)-leftover
+        self.write("G1 X"+str(x1)+" Y"+str(y1))
+
+        while (z>=pocket_bottom):
+            self.write("G1 Z"+str(z))
+            self.two_d_contour_rectangle(rectangle,leftover)
+            z=z-self.stepdown
+        z=pocket_bottom
+        self.write("G1 Z"+str(z))
+        self.two_d_contour_rectangle(rectangle,leftover)
+        self.write("G1 Z"+str(self.clearance_height))
+
+
+    def two_d_contour_rectangle(self, rectangle, leftover=0):
+        tool=self.tool
+        x1=rectangle[0][0]-(tool/2)-leftover
+        x2=rectangle[1][0]+(tool/2)+leftover
+        y1=rectangle[0][1]-(tool/2)-leftover
+        y2=rectangle[1][1]+(tool/2)+leftover
+        self.write("G1 X"+str(x1)+" Y"+str(y1))
+        self.write("G1 X"+str(x2))
+        self.write("G1 Y"+str(y2))
+        self.write("G1 X"+str(x1))
+        self.write("G1 Y"+str(y1))
+
+
+    def two_d_pocket_on_x(self,rectangle,leftover):
         x=rectangle[0][0]+(self.tool/2)+leftover
-        x2=rectangle[1][]
+        lim_x=rectangle[1][0]-(self.tool/2)-leftover
         y=rectangle[0][1]+(self.tool/2)+leftover
+        lim_y=rectangle[1][1]+(self.tool/2)-leftover
         self.write("G1 X"+str(x)+" Y"+str(y))
-        while (y<=rectangle[1][1]) :
+        while (y<=lim_y) :
+            self.write("G1 X"+str(lim_x)) #go right
+            y=y+self.tool/2-self.overstep #avance
+            if (y<=lim_y):
+                self.write("G1 Y"+str(y))
+            else :
+                self.write("G1 Y"+str(lim_y))
+            self.write("G1 X"+str(x))  # go left
+            y=y+self.tool/2-self.overstep  #avance
+            if (y<=lim_y):
+                self.write("G1 Y"+str(y))
+            else :
+                self.write("G1 Y"+str(lim_y))
+
+
 
 
 
 
     def pocket_on_x(self, pocket_top, pocket_bottom, rectangle, leftover=0):
-# # reclange list of list , always from bottom left to top right !
+# # rectange list of list , always from bottom left to top right !
         if (self.tool+2*leftover>rectangle[1][0]-rectangle[0][0]):
             self.write(G_COMMENT+" pocket_on_x() Error tool too big for reclangle "+str(rectangle))
             exit()
         if (self.tool+2*leftover>rectangle[1][1]-rectangle[0][1]):
             self.write(G_COMMENT+" pocket_on_x() Error tool "+self.tool+" too big for reclangle "+str(rectangle))
+            exit()
         if (pocket_top<=pocket_bottom):
             self.write(G_COMMENT+" pocket_on_x() Error Top "+pocket_top+ "equal or under bottom "+self.bottom)
+            exit()
         if (pocket_top>=self.clearance_height):
             self.write(G_COMMENT+" pocket_on_x() Error Top "+pocket_top+ "equal or over clearance "+self.clearance_height)
-        self.write(G_COMMENT+" pocket_on_x("+str(pocket_top)+" "+str(pocket_bottom)+" "+str(rectangle)+" "+str(stepdown)+" "+str(leftover)+")")
+            exit()
+        self.write(G_COMMENT+" pocket_on_x("+str(pocket_top)+" "+str(pocket_bottom)+" "+str(rectangle)+" "+str(self.stepdown)+" "+str(leftover)+")")
         self.write("G1 Z"+str(self.clearance_height))
         height=pocket_top+self.stepdown
         init_x=rectangle[0][0]+(self.tool/2)+leftover
@@ -67,7 +120,7 @@ class gcode_gen:
         self.write("G1 X"+str(init_x)+" Y"+str(init_y))
         while (height >= pocket_bottom) :
             self.write("G1 Z"+str(height))
-            self.2d_pocket_on_x(rectangle,leftover)
+            self.two_d_pocket_on_x(rectangle,leftover)
             height=height-self.stepdown
         self.write("G1 Z"+str(self.clearance_height))
 
@@ -114,6 +167,12 @@ class point:
         return vec3(sef.x, self.y,self.z)
 
 
+
+SAMPLE_RECTANGLE = (
+    (-30,40),(30,50)
+)  #always from bottom left to top right !
+
 gen=gcode_gen("test.tab", "test program",clearance = 40, tool=TOOL_8 )
-gen.pocket_on_x( 20, 10, SAMPLE_RECTANGLE, 1, 0.1)
+gen.pocket_on_x( 20, 10, SAMPLE_RECTANGLE, 0.1)
+gen.contour_rectangle(20,10, SAMPLE_RECTANGLE, leftover=0)
 gen.end()
