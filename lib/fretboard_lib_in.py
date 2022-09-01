@@ -68,22 +68,42 @@ def toinch(num,convert=0):
 def calculate_space_between_strings_zero_line(fretboard):
     s=0;
     strings_acumulated_width=0
-    for string in fretboard["strings"]:
+    n = 0
+    width_in_mm=fretboard["strings"][0]*25.4/2
+    strings_acumulated_width=strings_acumulated_width+width_in_mm
+    n=n+1
+    while n < len(fretboard["strings"])-1 :
+        string = fretboard["strings"][n]
         width_in_mm=string*25.4
         strings_acumulated_width=strings_acumulated_width+width_in_mm
+        n=n+1
+    string = fretboard["strings"][n]
+    width_in_mm=string*25.4/2
+    strings_acumulated_width=strings_acumulated_width+width_in_mm
+
     B3=fretboard["width_at_zero_line"]
     B4=fretboard["left_border"]
     B5=fretboard["right_border"]
     return (B3-B4-B5-strings_acumulated_width) / (len(fretboard["strings"])-1)
 
+
 def calculate_space_between_strings_bottom_line(fretboard):
-    s=0;
+    n=0
     strings_acumulated_width=0
     if fretboard["bridge_spacing_compensated"]==1:
     ## if the bridge has string spacing adjustment , else the calculation is just proportional
-        for string in fretboard["strings"]:
+        width_in_mm=fretboard["strings"][0]*25.4/2
+        strings_acumulated_width=strings_acumulated_width+width_in_mm
+        n=n+1
+        while n < len(fretboard["strings"])-1 :
+            string = fretboard["strings"][n]
             width_in_mm=string*25.4
             strings_acumulated_width=strings_acumulated_width+width_in_mm
+            n=n+1
+        string = fretboard["strings"][n]
+        width_in_mm=string*25.4/2
+        strings_acumulated_width=strings_acumulated_width+width_in_mm
+
     B3=fretboard["width_at_bottom_line"]
     B4=fretboard["left_border"]
     B5=fretboard["right_border"]
@@ -104,12 +124,32 @@ def calculate_strings(fretboard):
     space_between_strings_bottom_line=calculate_space_between_strings_bottom_line(fretboard)
     zero_offset=fretboard["left_border"]
     bottom_offset=fretboard["left_border"]
-    for string in fretboard["strings"]:
-        zero_offset=zero_offset+((string*25.4)/2)
-        bottom_offset=bottom_offset+((string*25.4)/2)
-        center_offsets.append([zero_offset,bottom_offset])
+    n=0
+    string=fretboard["strings"][n]
+    zero_offset=zero_offset  #duh
+    bottom_offset=bottom_offset #duh
+    center_offsets.append([zero_offset,bottom_offset])
+    if fretboard["bridge_spacing_compensated"]==1:
         bottom_offset=bottom_offset+space_between_strings_bottom_line+((string*25.4)/2)
+    else :
+        bottom_offset=bottom_offset+space_between_strings_bottom_line
+    zero_offset=zero_offset+space_between_strings_zero_line+((string*25.4)/2)
+    n=1
+    while n < len(fretboard["strings"]):
+        string = fretboard["strings"][n]
+        zero_offset=zero_offset+((string*25.4)/2)
+        if fretboard["bridge_spacing_compensated"]==1:
+            bottom_offset=bottom_offset+((string*25.4)/2)
+        center_offsets.append([zero_offset,bottom_offset])
+        if fretboard["bridge_spacing_compensated"]==1:
+            bottom_offset=bottom_offset+space_between_strings_bottom_line+((string*25.4)/2)
+        else :
+            bottom_offset=bottom_offset+space_between_strings_bottom_line
+
         zero_offset=zero_offset+space_between_strings_zero_line+((string*25.4)/2)
+        n=n+1
+    print("last zero offset:"+str(zero_offset-space_between_strings_zero_line-((string*25.4)/2)))
+    print("right border:"+str(fretboard["right_border"]))
     for offset in center_offsets:
         a = [fretboard["left_side"][0][0]+offset[0],0]
         b = [fretboard["left_side"][1][0]+offset[1],max(fretboard["scale_left"],fretboard["scale_right"])]
@@ -168,11 +208,11 @@ def  generate_frame(msp,draw,fretboard):
         ],{"linetype":"DOT2"})
     draw.add_text(msp,"Puente con entonación/Intonated Bridge",(fretboard["comprensated_bridge"][0][0],fretboard["comprensated_bridge"][0][1]+40), 'LEFT')
 
-    if   fretboard["bridge_multiscale_compensation"]>0 :
-        draw.draw_line_list(msp,
-        [fretboard["comprensated_bridge"][1],[100,fretboard["comprensated_bridge"][1][1]]],{"linetype":"DOT2"})
-        text="Compensación/Compensation:"+str(round(fretboard["bridge_multiscale_compensation"],2))+" mm"
-        draw.add_text(msp,text,(80,fretboard["comprensated_bridge"][1][1]+5), 'LEFT')
+    #if   fretboard["bridge_multiscale_compensation"]>0 :
+        #draw.draw_line_list(msp,
+        #[fretboard["comprensated_bridge"][1],[100,fretboard["comprensated_bridge"][1][1]]],{"linetype":"DOT2"})
+        #text="Compensación/Compensation:"+str(round(fretboard["bridge_multiscale_compensation"],2))+" mm"
+        #draw.add_text(msp,text,(80,fretboard["comprensated_bridge"][1][1]+5), 'LEFT')
     draw.draw_line_list(msp,
     [fretboard["comprensated_bridge"][0],[-150,fretboard["comprensated_bridge"][0][1]]],{"linetype":"DOT2"})
     draw.add_text(msp,str(round(fretboard["comprensated_bridge"][1][1],2))+" mm",(100,fretboard["comprensated_bridge"][1][1]), 'LEFT')
@@ -230,15 +270,19 @@ def calculate_scale(scale,n_frets, compensation=0):
     return frets
 
 def calculate_frets(fretboard):
-    frets_left=calculate_scale(fretboard["scale_left"],fretboard["number_of_frets"])
-    frets_right=calculate_scale(fretboard["scale_right"],fretboard["number_of_frets"])
-    number=fretboard["fret_perpenticular_to_centerline"]
-    lfret_from_bridge=frets_left[number]
-    rfret_from_bridge=fretboard["scale_right"]-frets_right[number]
-    fretboard["bridge_multiscale_compensation"] = lfret_from_bridge-rfret_from_bridge
-    frets_right=calculate_scale(fretboard["scale_right"],fretboard["number_of_frets"],
-        fretboard["bridge_multiscale_compensation"])
-    fretboard["scale_positions"]=[frets_left,frets_right]
+    frets_left=calculate_scale(fretboard["scale_left"],fretboard["number_of_frets"]+1)
+    frets_right=calculate_scale(fretboard["scale_right"],fretboard["number_of_frets"]+1)
+    number=int(fretboard["fret_perpenticular_to_centerline"])
+    compensation=frets_left[number]-frets_right[number]
+    fretboard["bridge_multiscale_compensation"]=compensation
+    print("compensation"+str(compensation))
+
+    print("frets_right uncompensated"+str(frets_right))
+    compensated_frets_right=[]
+    for fret in frets_right:
+        compensated_frets_right.append(fret+compensation)
+    print("frets_right compensated"+str(frets_right))
+    fretboard["scale_positions"]=[frets_left,compensated_frets_right]
     fretboard=calculate_frets_segments(fretboard)
     return fretboard
 
@@ -251,7 +295,7 @@ def calculate_frets_segments(fretboard):
     p5 = array( right_string[0] )
     p6 = array( right_string[1] )
     n=0
-    while n< fretboard["number_of_frets"]:
+    while n<= fretboard["number_of_frets"]:
         position=[fretboard["scale_positions"][left][n],fretboard["scale_positions"][right][n]]
         left_baseline=[-300,position[left]],[300, position[left]]
         right_baseline=[-300,position[right]],[300, position[right]]
@@ -339,7 +383,7 @@ def render_limits(
     max_y = min_y + size_in_inches[1] * scale
     return min_x, min_y, max_x, max_y
 
-def describe(fretboard) :
+def describe(fretboard, lang) :
     nga=("scale left:"+str(fretboard["scale_left"])+
             "\nscale right:"+str(fretboard["scale_right"])+
             "\nwidth at zero line:"+str(fretboard["width_at_zero_line"])+
@@ -348,8 +392,8 @@ def describe(fretboard) :
             "\nstrings (inches):"+str(fretboard["strings"])
             )
 
-    specs=fretboard_specs(fretboard,lang_es)
-    specs=specs+"\n\n\n"+fretboard_specs(fretboard,lang_en)
+    specs=fretboard_specs(fretboard,lang)
+    specs=specs+"\n\n\n"+fretboard_specs(fretboard,lang)
     return specs
 
 
@@ -394,7 +438,7 @@ def save_to_scale(fretboard,
     print("shit:"+str(MTextEntityAlignment.BOTTOM_LEFT))
     msp.add_mtext(
         "Fretboard Generator \nby Marc Alier 2022 \n"
-        +"https://aprendizdeluthier.com\nScale 1:1"
+        +"https://aprendizdeluthier.com/fretboard_generator\nScale 1:1"
         ,
         dxfattribs={"style": "OpenSans", "char_height": 0.22},
     ).set_location(
@@ -402,18 +446,25 @@ def save_to_scale(fretboard,
     )
     msp.add_mtext(
         "Fretboard Generator \nby Marc Alier 2022 \n"
-        +"https://aprendizdeluthier.com"
+        +"https://aprendizdeluthier.com/fretboard_generator"
         ,
         dxfattribs={"style": "OpenSans", "char_height": 0.22},
         ).set_location(
             (0.2, 1), attachment_point=MTextEntityAlignment.BOTTOM_LEFT
         )
     msp.add_mtext(
-    describe(fretboard),
+    describe(fretboard,lang_en),
     dxfattribs={"style": "OpenSans", "char_height": 0.13},
     ).set_location(
         (0.2, 30), attachment_point=MTextEntityAlignment.BOTTOM_LEFT
     )
+    msp.add_mtext(
+    describe(fretboard,lang_es),
+    dxfattribs={"style": "OpenSans", "char_height": 0.13},
+    ).set_location(
+        (30, 30), attachment_point=MTextEntityAlignment.BOTTOM_LEFT
+    )
+
 
     ctx = RenderContext(doc)
     fig = plt.figure(dpi=dpi)

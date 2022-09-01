@@ -1,0 +1,4 @@
+{
+  "about":"base_output_file_url points to the web url where ./output folder is published",
+  "base_output_file_url": "https://wasabi.upc.edu/fretboard-pro/output"
+}

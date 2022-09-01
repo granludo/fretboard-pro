@@ -1,0 +1,148 @@
+DISEÑO Y DESARROLLO DEL ERP DE DAREISLAND
+
+Las tareas realizadas en esta fase tienen como objetivo el desarrollo de las nuevas funcionalidades, según los diseños realizados en la fase anterior y así poder materializar el prototipo no comercializable de dicha plataforma.
+
+Se han realizado los desarrollos correspondientes a las siguientes "funcionalidades" diseñadas, aportándose las evidencias que se mencionan:
+- Dimensiones
+  Ilustración 27. Dimensiones -> formulario listado
+  Ilustración 28. Dimensiones II -> formulario edicion lista
+  Ilustración 29. Dimensiones III -> formulario edición lista
+
+- Modificaciones de proyectos
+Ilustración 30. Modificaciones de Proyectos. -> captura pantalla
+Ilustración 31. Modificaciones de Proyectos II -> formulario
+Ilustración 32. Campos Nuevos -> Detalle campos añadidos
+Ilustración 33. Campos Nuevos II -> formulario
+Ilustración 34. Campos Nuevos III -> Detalle campos añadidos
+Ilustración 35. Campos Nuevos IV -> formulario
+
+- Modificaciones de Empleados: para la gestión de empleados
+Ilustración 36. Páginas adicionales -> menu
+Ilustración 37. Página de Alertas -> formulario
+Ilustración 38. Revisión Periódica -> formulario listado
+Ilustración 39. Incentivos Referidos -> formulario listado
+Ilustración 40. Itinerario Captación -> formulario
+Ilustración 41. Promoción -> formulario
+Ilustración 42. Importar cualificaciones -> formulario importación de excel
+Ilustración 43. Importar cualificaciones II -> listado
+
+
+- Previsiones: con la gestión de previsiones financieras
+Ilustración 44. Página de previsión - formulario
+Ilustración 45. Páginas Datos Previsión. -> listado
+Ilustración 46. Importar Excel -> detalle captura pantalla
+Ilustración 47. Mes datos previsión -> detalle captura pantalla
+Ilustración 48. Actualizar Previsión. -> detalle captura pantalla
+
+  - Packs de costes indirectos
+Ilustración 49. Packs -> formulario
+Ilustración 50. Tipos de Pack -> menu
+Ilustración 51. Editar Lista -> form edición listado
+
+- Modificaciones de familia recurso
+Ilustración 52. Detalles de conceptos -> form
+Ilustración 53. Importes -> formulario
+Ilustración 53. Importes -> listado
+Ilustración 54. Editar Lista -> form edit listado
+Ilustración 55. Tipo de coste -> detalle
+Ilustración 56. Paquetes -> formulario
+Ilustración 57. Coste Directo -> listado costes
+Ilustración 58. Coste Directo II -> form edición lista
+Ilustración 59. Coste Directo III -> form edición lista
+Ilustración 61. Coste Directo V -> listado modificado
+Ilustración 62. Coste Indirecto -> form edit lista
+Ilustración 63. Coste Indirecto II -> form edit lista
+Ilustración 64. Packs Empleado -> formulario
+Ilustración 65. Packs Empleado II -> listado
+Ilustración 66. Editar -> pantalla edición
+Ilustración 67. Packs de Recurso -> listado
+Ilustración 68. Packs de Recurso -> listado edición
+Ilustración 69. Coste Recurso -> listado
+Ilustración 70. Detalles -> detalle captura coste recurso
+Ilustración 71. Nuevos conceptos -> formulario
+Ilustración 72. Importes -> formulario
+Ilustración 73. Horas laborables por mes -> formulario
+Ilustración 74. Capacidad de grupo -> formulario
+Ilustración 75. Vacaciones ponderadas -> detalle menu
+Ilustración 76. Vacaciones Ponderadas II -> formulario
+
+- Planificador
+Ilustración 77. Asignación por manager -> formulario
+Ilustración 78. Asignación por manager II -> formulario
+Ilustración 79. Asignación por manager III -> formulario
+Ilustración 80. Asignación por manager IV -> formulario
+Ilustración 81. Asignar proyectos -> detalle menu
+Ilustración 82. Asignar proyectos II -> > formulario
+Ilustración 83. Proyectos por recurso y prev -> detalle menu
+Ilustración 84. Recursos proyectos previsión  > formulario
+Ilustración 85. Ficha Empleado  -> formulario
+Ilustración 86. Contraseña manager -> detalle cambio password
+Ilustración 87. Manager de recursos -> detalle menu
+Ilustración 88. Manager de Recursos II ->  formulario
+Ilustración 89. Manager de Proyectos -> detalle menu
+Ilustración 90. Manager de Proyectos II -> formulario
+Ilustración 91. Carga de nóminas -> formulario
+Ilustración 92. Costes Proyectos -> formulario
+Ilustración 93. Confirmación de importación -> notificación confirmación
+Ilustración 94. Importar Excel > formulario importación
+Ilustración 95. Registrar > formulario
+
+- Pirámides para presupuestos
+Ilustración 96. Plantilla pirámide -> detalle menu
+Ilustración 97. Plantilla pirámide II -> formulario listado
+Ilustración 98. Pirámide _> detalle menu
+Ilustración 99. Pirámide II -> detalle listado
+Ilustración 100. Copiar plantilla -> detalle listado
+Ilustración 101. Plantilla -> formulario
+Ilustración 102. Pirámide de presupuesto -> listado
+Ilustración 103. Pirámide -> formulario
+Ilustración 104. Pirámide II -> formulario
+- presupuestos
+Ilustración 105. Requisitos -> captura pantalla en power bi
+Ilustración 106. Web Service Presupuesto -> código json
+Ilustración 107. Presupuesto definitivo -> detalle menu
+Ilustración 108. Presupuesto definitivo II ->formulario
+Ilustración 109. Presupuesto definitivo III -> formulario
+Ilustración 110. Presupuesto nuevo _> detalle menu
+Ilustración 111. Presupuesto nuevo II -> formulario listado
+Ilustración 112. Presupuesto nuevo III -> detalle
+
+- Solicitudes de compra
+Ilustración 113. Aprobar Pedidos -> formulario
+Ilustración 114. Aprobar Tesorería -> formulario
+Ilustración 115. Validador Sustitutivo -> formulario
+Ilustración 116. Solicitudes compra -> menu
+Ilustración 117. Solicitudes compra II -> formulario Web
+Ilustración 118. Microsoft Flow -> captura pantalla ms Flow
+Ilustración 119. Solicitudes compra III -> busqueda
+Ilustración 120. Solicitudes compra IV -> resultado busquda
+Ilustración 122. Confirmación importación -> formulario
+Ilustración 123. Notificación -> formulario
+ Ilustración 124. Campos desarrollados -> formulario
+Ilustración 125. Apropiaciones manager -> formulario
+Ilustración 126. Apropiaciones manager -> formulario
+Ilustración 127. Comentarios manager -> formulario
+Ilustración 128. Aprobar compra -> formulario
+Ilustración 129. Cancelar compra -> formulario
+Ilustración 130. Apropiaciones de compra tesorería -> formulario
+Ilustración 131. Apropiaciones de compra tesorería -> formulario
+Ilustración 132. Comentarios tesorería -> formulario
+Ilustración 133. Aprobar compra -> formulario
+Ilustración 134. Cancelar compra -> formulario
+
+- Factura venta
+Ilustración 135. Request page -> form
+Ilustración 136. Diseños -> archivos rdl, generados
+Ilustración 137. Diseño I  -> mockup factura
+Ilustración 138. Diseño II -> mockup factura
+Ilustración 139. Factura -> formulario
+Ilustración 140. Id Informe -> formulario
+Ilustración 141. Botones de ejecución -> menu
+
+- Traer timelogs shotguns
+
+Ilustración 142. Horas Shotgun Persona _> pantallazo
+Ilustración 143. Horas Shotgun Proyecto
+
+Las evidencias son profusas y dejan entrever todo el workflow de la aplicación desarrollada.
+La actividad se encuentra completada.

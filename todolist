@@ -1,0 +1,9 @@
+- add bridge and compensated bridge heights 
+- add correct inks to pdf and dxf (maybe add back png? )
+- multilingual markdonw and form
+- minor docuble NUT at rotulation of PDF
+- generate html
+- build the docker image
+- deploy at wasabi
+- think captcha
+-
