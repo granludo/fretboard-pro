@@ -25,17 +25,17 @@ lang_es={
     "Escala: ":"Escala: ",
     "Trastes: ":"Trastes: ",
     "Ancho en Cejuela (centro cuerda E a centro cuerda e): ":
-        "Ancho en Cejuela \n   (centro cuerda E a centro cuerda e):  ",
+        "Ancho en Cejuela :  ",
     "Ancho en Puente (centro cuerda a centro cuerda)":
-        "Ancho en Puente \n   (centro cuerda a centro cuerda): ",
+        "Ancho en Puente/Silleta : ",
     "Borde izquierdo: ":"Borde izquierdo: ",
     "Borde derecho: ":"Borde derecho: ",
-    "Cuerdas: ":"Cuerdas: ",
+    "Cuerdas: ":"Número de Cuerdas: ",
     "Cordaje: ":"Cordaje: ",
     "Compensation:":"Compensación multiescala:",
-    "Puente con entonación":"Puente con entonación",
-    "Compensación entonación izquierda":"Compensación entonación izquierda",
-    "Compensación entonación derecha":"Compensación entonación derecha"
+    "Puente con entonación":"Puente con entonación ",
+    "Compensación entonación izquierda":"Compensación entonación izquierda: ",
+    "Compensación entonación derecha":"Compensación entonación derecha: "
 }
 lang_en={
     "Diapasón multiescala":"Mulstiscale (FAN) fretboard",
@@ -44,18 +44,16 @@ lang_en={
     "Traste Perpenticular: ":"Perpenticular Fret: ",
     "Escala: ":"Scale: ",
     "Trastes: ":"Frets: ",
-    "Ancho en Cejuela (centro cuerda E a centro cuerda e): ":
-        "Width at NUT \n   (string center to string center:  ",
-    "Ancho en Puente (centro cuerda a centro cuerda)":
-        "Width at NUT \n   (string center to string center):  ",
+    "Ancho en Cejuela (centro cuerda E a centro cuerda e): ":     "Width at Nut :  ",
+    "Ancho en Puente (centro cuerda a centro cuerda)": "Width at Bridge :",
     "Borde izquierdo: ":"Left overhang: ",
     "Borde derecho: ":"Right overhang: ",
-    "Cuerdas: ":"Strings: ",
+    "Cuerdas: ":"Number of Strings: ",
     "Cordaje: ":"Gauges: ",
     "Compensation:":"Mulstiscale compensation:",
-    "Puente con entonación":"Intonatted bridge",
-    "Compensación entonación izquierda":"Left intonnation",
-    "Compensación entonación derecha":"Right intonnation"
+    "Puente con entonación":"Intonatted bridge ",
+    "Compensación entonación izquierda":"Left intonnation: ",
+    "Compensación entonación derecha":"Right intonnation:"
 }
 
 
@@ -384,6 +382,7 @@ def render_limits(
     return min_x, min_y, max_x, max_y
 
 def describe(fretboard, lang) :
+
     nga=("scale left:"+str(fretboard["scale_left"])+
             "\nscale right:"+str(fretboard["scale_right"])+
             "\nwidth at zero line:"+str(fretboard["width_at_zero_line"])+
@@ -393,7 +392,7 @@ def describe(fretboard, lang) :
             )
 
     specs=fretboard_specs(fretboard,lang)
-    specs=specs+"\n\n\n"+fretboard_specs(fretboard,lang)
+    #specs=specs+"\n\n\n"+fretboard_specs(fretboard,lang)
     return specs
 
 
@@ -438,31 +437,44 @@ def save_to_scale(fretboard,
     print("shit:"+str(MTextEntityAlignment.BOTTOM_LEFT))
     msp.add_mtext(
         "Fretboard Generator \nby Marc Alier 2022 \n"
-        +"https://aprendizdeluthier.com/fretboard_generator\nScale 1:1"
         ,
         dxfattribs={"style": "OpenSans", "char_height": 0.22},
     ).set_location(
-        (0.2, 38), attachment_point=MTextEntityAlignment.BOTTOM_LEFT
+        (0.2, 36.5), attachment_point=MTextEntityAlignment.BOTTOM_LEFT
+    )
+    msp.add_mtext(
+        "http://aprendizdeluthier.com/fretboard_generator\nScale 1:1"
+        ,
+        dxfattribs={"style": "OpenSans", "char_height": 0.14},
+    ).set_location(
+        (0.2, 35.5), attachment_point=MTextEntityAlignment.BOTTOM_LEFT
     )
     msp.add_mtext(
         "Fretboard Generator \nby Marc Alier 2022 \n"
-        +"https://aprendizdeluthier.com/fretboard_generator"
         ,
         dxfattribs={"style": "OpenSans", "char_height": 0.22},
-        ).set_location(
-            (0.2, 1), attachment_point=MTextEntityAlignment.BOTTOM_LEFT
-        )
+    ).set_location(
+        (0.2, 2), attachment_point=MTextEntityAlignment.BOTTOM_LEFT
+    )
+    msp.add_mtext(
+        "http://aprendizdeluthier.com/fretboard_generator\nScale 1:1"
+        ,
+        dxfattribs={"style": "OpenSans", "char_height": 0.16},
+    ).set_location(
+        (0.2, 1), attachment_point=MTextEntityAlignment.BOTTOM_LEFT
+    )
+
     msp.add_mtext(
     describe(fretboard,lang_en),
     dxfattribs={"style": "OpenSans", "char_height": 0.13},
     ).set_location(
-        (0.2, 30), attachment_point=MTextEntityAlignment.BOTTOM_LEFT
+        (0.2, 32), attachment_point=MTextEntityAlignment.BOTTOM_LEFT
     )
     msp.add_mtext(
     describe(fretboard,lang_es),
     dxfattribs={"style": "OpenSans", "char_height": 0.13},
     ).set_location(
-        (30, 30), attachment_point=MTextEntityAlignment.BOTTOM_LEFT
+        (7, 32), attachment_point=MTextEntityAlignment.BOTTOM_LEFT
     )
 
 

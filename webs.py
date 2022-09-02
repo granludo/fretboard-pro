@@ -12,26 +12,19 @@ from datetime import datetime
 
 import markdown
 
-def multiscale_2_markdonw(fretboard):
+
+
+def multiscale_2_markdonw(fretboard,outputfile):
     mark=[]
 
-    mark.append("## Scale")
-    mark.append("|Fretboard Parameters |Values|")
-    mark.append("|:---|---:|")
-    mark.append("|**Left Scale**:|"+str(fretboard["scale_left"])+"|")
-    mark.append("|**Right Scale**:|"+str(fretboard["scale_right"])+"|")
-    mark.append("|**Frets**:|"+str(fretboard["number_of_frets"])+"|")
-    mark.append("|**Fretboard Width at nut** \n*(From string center to string center)*:|"+str(fretboard["width_at_zero_line"])+" mm|")
-    mark.append("|**Fretboard Width at bridge** \n*(From string center to string center)*:|"+str(fretboard["width_at_bottom_line"])+" mm|")
-    mark.append("|**Left border**:|"+str(fretboard["left_border"])+" mm|")
-    mark.append("|**Right border**:|"+str(fretboard["right_border"])+" mm|")
-    mark.append("|**Bridge compensation**:|"+str(fretboard["bridge_spacing_compensated"])+" mm|")
-    mark.append("|**Fret perpenticular to centerline**:|"+str(fretboard["fret_perpenticular_to_centerline"])+" |")
     perp=fretboard["fret_perpenticular_to_centerline"]
     mark.append("<p></p>")
-    mark.append("# Fret positions")
-
-    mark.append("|Fret |Left Scale|Right Scale|")
+    mark.append("# Fret positions\* / Posiciones de los trastes \**")
+    mark.append("<p></p>")
+    mark.append("\* Distances measured in milimeters from de 0 fret in the Left Scale</br>")
+    mark.append("\** Dist&aacute;ncias medidas en mil&iacute;metros desde el traste 0 en la Escala Izquierda")
+    mark.append("<p></p>")
+    mark.append("|**Fret / Traste **|** Left / Izquierda**|&nbsp;&nbsp;&nbsp;&nbsp;**Right / Derecha**|")
     mark.append("|:---|------:|------:|")
     scale_left=fretboard["scale_positions"][0] # left scale
     scale_right=fretboard["scale_positions"][1] # rigth scale
@@ -40,52 +33,71 @@ def multiscale_2_markdonw(fretboard):
         fret_left=scale_left[n]
         fret_rigth=scale_right[n]
         if n==0 :
-            mark.append("**Nut**|----------  "+str(round(fret_left,4))+" mm|----------  "+str(round(fret_rigth,4))+" mm|")
+            mark.append("**0 - Nut - Cejuela**|----------  "+str(round(fret_left,4))+" mm|----------  "+str(round(fret_rigth,4))+" mm|")
         else :
             if n==perp :
-                mark.append("**Fret "+ str(n) +"**|**"+str(round(fret_left,4))+" mm**|**"+str(round(fret_rigth,4))+"mm**|")
+                mark.append("**Fret / Traste "+ str(n) +"**|**"+str(round(fret_left,4))+" mm**|**"+str(round(fret_rigth,4))+"mm**|")
             else :
-                 mark.append("**Fret "+ str(n) +"**|"+str(round(fret_left,4))+" mm|"+str(round(fret_rigth,4))+"mm|")
+                mark.append("**Fret / Traste "+ str(n) +"**|"+str(round(fret_left,4))+" mm|"+str(round(fret_rigth,4))+"mm|")
 
         n=n+1
-
-    mark.append("## Strings")
+    mark.append("**Intonated Bridge**\n**Puente con entonaci&oacute;n** |"+str(round(fretboard["intonated_bridge"][0][1],4))+" mm**|**"+str(round(fretboard["intonated_bridge"][1][1],4)))
+    mark.append("<p></p>")
+    mark.append("## Strings gauches / grosores de cuerdas ")
+    mark.append("*Units in inches*, *Unidades en pulgadas*")
     mark.append(str(fretboard["strings"]))
+    mark.append("## Download Files / Descarga Ficheros")
+    f = open("conf.json", 'r')
+    configuracio = json.load(f)
+    mark.append("[Scale 1:1 PDF File / Fichero PDF a Escala 1:1]("+configuracio["base_output_file_url"]+"/"+outputfile+".pdf) , ")
+    mark.append("[DXF File / Fichero DXF]("+configuracio["base_output_file_url"]+"/"+outputfile+".dxf)")
 
     return mark
 
 
-def single_scale_2_markdonw(fretboard):
+def single_scale_2_markdonw(fretboard,outputfile):
     mark=[]
 
-    mark.append("## Scale")
-    mark.append("|Fretboard Parameters |Values|")
-    mark.append("|:---|---:|")
-    mark.append("|**Scale**:|"+str(fretboard["scale_left"])+"|")
-    mark.append("|**Frets**:|"+str(fretboard["number_of_frets"])+"|")
-    mark.append("|**Fretboard Width at nut** \n*(From string center to string center)*:|"+str(fretboard["width_at_zero_line"])+" mm|")
-    mark.append("|**Fretboard Width at bridge** \n*(From string center to string center)*:|"+str(fretboard["width_at_bottom_line"])+" mm|")
-    mark.append("|**Left border**:|"+str(fretboard["left_border"])+" mm|")
-    mark.append("|**Right border**:|"+str(fretboard["right_border"])+" mm|")
-    mark.append("|**Bridge compensation**:|"+str(fretboard["bridge_spacing_compensated"])+" mm|")
 
     mark.append("<p></p>")
-    mark.append("# Fret positions")
+    mark.append("# Fret positions\* / Posiciones de los trastes \**")
+    mark.append("<p></p>")
+    mark.append("\* Distances measured in milimeters from de 0 fret in the Left Scale</br>")
+    mark.append("\** Dist&aacute;ncias medidas en mil&iacute;metros desde el traste 0 en la Escala Izquierda")
+    mark.append("<p></p>")
 
-    mark.append("|Fret |Distance from nut|")
-    mark.append("|:---|---:|")
-    scale=fretboard["scale_positions"][0] # left scale
+    mark.append("|**Fret / Traste &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**|**Scale / Escala**|")
+    mark.append("|:---|------:|")
+    scale_left=fretboard["scale_positions"][0] # left scale
+    scale_right=fretboard["scale_positions"][1] # rigth scale
     n=0
-    for fret in scale:
+    while n < fretboard["number_of_frets"]:
+        fret_left=scale_left[n]
+        fret_rigth=scale_right[n]
         if n==0 :
-            mark.append("**Nut**|"+str(fret)+" mm|")
-        else:
-            mark.append("**Fret"+ str(n) +"**|"+str(round(fret,4))+" mm|")
+            mark.append("**0 / Nut / Cejuela **|  "+str(round(fret_left,4))+" mm  ")
+        else :
+            mark.append("**Fret / Traste "+ str(n) +"**|"+str(round(fret_left,4))+" mm")
         n=n+1
+    mark.append("<p></p>")
+    mark.append("**Intonated Bridge \n Puente Entonado :**"+str(round(fretboard["intonated_bridge"][0][1],4))+" mm** / **"+str(round(fretboard["intonated_bridge"][1][1],4)))
+    mark.append("<p></p>")
+    mark.append("## Strings gauges / Grosores cuerdas ")
+    mark.append("<p></p>")
+    mark.append("*Units in inches* / *Unidades en pulgadas*")
+    mark.append(str(fretboard["strings"]))
+    mark.append("## Download Files / Descarga Ficheros")
+    f = open("conf.json", 'r')
+    configuracio = json.load(f)
+    mark.append("<p></p>")
+    mark.append("[Scale 1:1 PDF File / Fichero PDF a Escala 1:1]("+configuracio["base_output_file_url"]+"/"+outputfile+".pdf) , ")
+    mark.append("[DXF File / Fichero DXF]("+configuracio["base_output_file_url"]+"/"+outputfile+".dxf)")
 
     return mark
 
-def fretb_2_markdown(fretboard):
+
+
+def fretb_2_markdown(fretboard,outputfile):
 
     mark=[]
     mark.append(fretboard["about"])
@@ -93,9 +105,46 @@ def fretb_2_markdown(fretboard):
     mark.append("")
     multiscale=(fretboard["scale_left"]!=fretboard["scale_right"])
     if multiscale :
-        mark=mark+multiscale_2_markdonw(fretboard)
+        mark.append("## Multiscale Fretboard / Diapas&oacute;n Multi-escala ")
     else:
-        mark=mark+single_scale_2_markdonw(fretboard)
+        mark.append("## Fretboard / Diapas&oacute;n ")
+    mark.append("<p></p>")
+    mark.append("*Units in milimeters except for string gauges* / *Unidades en mil&iacute;metros excepto para los grosores de cuerdas*")
+    mark.append("<p></p>")
+    mark.append("|Fretboard Parameters |Values|&nbsp;&nbsp;&nbsp;|Par&aacute;metros diapas&oacute;n|Valores|")
+    mark.append("|:---|---:|---|:---|---:")
+    if multiscale :
+        mark.append("|**Left Scale**:|"+str(fretboard["scale_left"])+" mm ||**Escal Izquierda**|"+str(fretboard["scale_left"])+" mm")
+        mark.append("|**Right Scale**:|"+str(fretboard["scale_right"])+" mm ||**Escala Derecha**|"+str(fretboard["scale_right"])+" mm")
+        mark.append("|**Fret perpenticular to centerline**:|"+str(fretboard["fret_perpenticular_to_centerline"])+
+        " ||**Traste perpenticular a la l&iacute;nea central**|"+str(fretboard["fret_perpenticular_to_centerline"])+" ")
+
+    else :
+        mark.append("|**Scale**:|"+str(fretboard["scale_left"])+" mm ||**Escala**|"+str(fretboard["scale_left"])+" mm")
+    mark.append("|**Frets**:|"+str(fretboard["number_of_frets"])+"||**N&uacute;mero de Trastes**|"+str(fretboard["number_of_frets"])+" mm")
+    mark.append("|**Width at nut** :|"+str(fretboard["width_at_zero_line"])+
+    " mm||**Ancho en Cejuela**|"+str(fretboard["width_at_zero_line"])+" mm")
+    mark.append("|**Width at bridge** :|"+str(fretboard["width_at_bottom_line"])+" mm||**Ancho en silleta/puente**|"+str(fretboard["width_at_bottom_line"])+" mm")
+    mark.append("|**Left border**:|"+str(fretboard["left_border"])+
+    " mm||**Borde Izquierdo**|"+str(fretboard["left_border"])+" mm")
+    mark.append("|**Right border**:|"+str(fretboard["right_border"])+" mm||**Borde Derecho**|"+str(fretboard["right_border"])+" mm")
+
+    if fretboard["bridge_spacing_compensated"]==1 :
+        mark.append("|**Bridge strings spacing**| Gauge Compensation ||**Espaciado cuerdas en Selleta**| Compensado por grosor|")
+    else :
+        mark.append("|**Bridge strings spacing**| Equal distances ||**Espaciado cuerdas en Selleta**| Dist&aacute;ncias iguales|")
+    mark.append("|**Bridge Intonnation Left**:|"+str(fretboard["intonation_compensation_left"])+
+        " ||**Entonaci&oacute;n Puente Izquierda**|"+str(fretboard["intonation_compensation_left"])+" mm")
+    mark.append("|**Bridge Intonnation Right**:|"+str(fretboard["intonation_compensation_right"])+
+        " ||**Entonaci&oacute;n Puente Derecha**|"+str(fretboard["intonation_compensation_right"])+" mm")
+
+
+
+
+    if multiscale :
+        mark=mark+multiscale_2_markdonw(fretboard,outputfile)
+    else:
+        mark=mark+single_scale_2_markdonw(fretboard,outputfile)
     return markdown_2_string(mark)
 
 def markdown_2_string(mark):
@@ -111,10 +160,10 @@ urls = (
     '/', 'index'
 )
 
-def render_fretboard_output(filename) :
+def render_fretboard_output(filename,outputfile) :
  f = open(filename, 'r')
  fretboard = json.load(f)
- md_text=fretb_2_markdown(fretboard)
+ md_text=fretb_2_markdown(fretboard,outputfile)
 # print(md_text)
  html = markdown.markdown(md_text,extensions=["tables"])
  return html
@@ -294,12 +343,12 @@ class index:
         #print("./output/"+outputfile+".json")
         # output=output+"\n\n\nFRETBOARD RESULT\n"+render_fretboard_output("./output/"+outputfile+".json")
 
-        return render_fretboard_output("./output/"+outputfile+".json")
+        return render_fretboard_output("./output/"+outputfile+".json", outputfile)
 
 if __name__ == "__main__":
-
     f = open("conf.json", 'r')
     configuracio = json.load(f)
+    print(str(configuracio))
 
     app = web.application(urls, globals())
     app.run()
