@@ -1,6 +1,6 @@
 # fretboard-pro
 
-Fretbnoard-pro allows to design a fretbnoard for a guitar, bass guitar or any fretted instrument fretboard with tempered intonation 
+Fretboard-pro allows to design a fretbnoard for a guitar, bass guitar or any fretted instrument fretboard with tempered intonation 
 
 c) By Marc Alier 2022, @granludo https://apendizdeluthier.com/fretboard-generator under GPL License v3.0
 
