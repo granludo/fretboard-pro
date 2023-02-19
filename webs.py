@@ -164,7 +164,6 @@ def render_fretboard_output(filename,outputfile) :
  f = open(filename, 'r')
  fretboard = json.load(f)
  md_text=fretb_2_markdown(fretboard,outputfile)
-# print(md_text)
  html = markdown.markdown(md_text,extensions=["tables"])
  return html
 
@@ -172,8 +171,8 @@ def render_fretboard_output(filename,outputfile) :
 def select_strings(data) :
     default=[0.0, 0.0, 0.0,0.0, 0.0, 0.0,0.0,0.0]
     strings={
-#        "strings_e9s":[0.0, 0.0, 0.0, 0.0, 0.0, 0.0,0.0,0.0],
-        "strings_e9":[0.009, 0.011, 0.016, 0.024, 0.032, 0.042,0.052,0.062],
+        "default":[0.0, 0.0, 0.0, 0.0, 0.0, 0.0,0.0,0.0],
+        "strings_e9s":[0.009, 0.011, 0.016, 0.024, 0.032, 0.042,0.052,0.062],
         "strings_e10s":[0.010, .0135, 0.017,0.025, 0.034, 0.046,0.060,0.072],
         "strings_e11s":[0.011, 0.014, 0.018,0.030, 0.042, 0.052, 0.064,0.074],
         "strings_e12s":[0.012,0.016,0.024,0.032,0.044,0.056,0.68,0.80],
@@ -186,35 +185,24 @@ def select_strings(data) :
         "ukelele":[0.026,0.036,0.024,0.30],
         "nylon":[0.035,0.035,0.035,0.035,0.035,0.035,0.035,0.035,0.035,0.035,0.035]
         }
-    options=strings.keys()
     if "number_of_strings" in data :
         nstrings=int(data["number_of_strings"])
-        print("number of strings:"+str(nstrings))
     else :
-        print("number_of_strings missing")
         return default
-    stringset="strings_e10s"
-    found=False
-#    print("options:"+str(data))
-    for s in options:
-        if s in data :
-            stringset=s
-            found=True
-            break
-    if not found :
-        print("stringset not found in form data")
-    if stringset in strings:
-        selection=strings[stringset]
-        if nstrings > len(selection):
-            print("not enough strings in "+str(selection))
-            return selection
-
-        sel=selection[:nstrings]
-        sel.reverse()
-        return sel
+    stringset="default"
+    print("hello"+str(data["Cordaje"]))
+    if "Cordaje" in data :
+        stringset=data["Cordaje"]
+        print("Stringset="+stringset+"ostia:"+data["Cordaje"]+"\nDATA="+str(data))
     else :
-        print("This should never happen\nUnknown stringset:"+stringset)
-        return default
+        print("Webs.py:Warning in Select_strings:Cordaje not fount in Data:"+str(data))
+    selection=strings[stringset]
+    if nstrings > len(selection):
+        print("Webs.py:Error in Select_strings:not enough strings in "+str(selection))
+        return selection
+    sel=selection[:nstrings]
+    sel.reverse()
+    return sel
 
 
 def ajusta_json(data):
@@ -239,13 +227,13 @@ def ajusta_json(data):
     if key in data :
         fretboard[key]=data[key]
     else :
-        print("JSON:missing key '"+key+"'")
+        print("Webs.py Errro ajusta_json JSON:missing key '"+key+"':data:"+str(data))
         return
     key="scale_left"
     if key in data :
         fretboard[key]=float(data[key])
     else :
-        print("JSON:missing key '"+key+"'")
+        print("Webs.py Errro ajusta_json JSON:missing key '"+key+"':data:"+str(data))
         return
     key="scale_right"
     if key in data :
@@ -256,19 +244,19 @@ def ajusta_json(data):
     if key in data :
         fretboard[key]=int(data[key])
     else :
-        print("JSON:missing key '"+key+"'")
+        print("Webs.py Errro ajusta_json JSON:missing key '"+key+"':data:"+str(data))
         return
     key="width_at_zero_line"
     if key in data :
         fretboard[key]=float(data[key])
     else :
-        print("JSON:missing key '"+key+"'")
+        print("Webs.py Errro ajusta_json JSON:missing key '"+key+"':data:"+str(data))
         return
     key="width_at_bottom_line"
     if key in data :
         fretboard[key]=float(data[key])
     else :
-        print("JSON:missing key '"+key+"'")
+        print("Webs.py Errro ajusta_json JSON:missing key '"+key+"':data:"+str(data))
         return
     key="left_border"
     if key in data :
@@ -306,44 +294,39 @@ def ajusta_json(data):
 
 class index:
     def GET(self):
-        name = 'Bob'
-        return render.index(name)
+        return "<a href='httpa://aprendideluthier.com/fretboard_generator'>Go back</a>"
 
     def POST(self):
-        data = web.input() # you can get data use this method
-        fretboard= ajusta_json(data)
-        if fretboard["scale_right"]==0:
-        #    print("--- single scale fretboard")
-            fretboard["scale_right"]=fretboard["scale_left"]
-        #else:
-        #    print("--- multiscale fretboard")
-        output="POST DATA:\n\n"+json.dumps(data,indent=3,sort_keys=False)+"\n"
-        output=output+"FRETBOARD PARAMETERS:\n\n"+json.dumps(fretboard,indent=3,sort_keys=False)
+        try :
+            data = web.input() # you can get data use this method
+            fretboard= ajusta_json(data)
+            if fretboard["scale_right"]==0:
+                fretboard["scale_right"]=fretboard["scale_left"]
+            output="POST DATA:\n\n"+json.dumps(data,indent=3,sort_keys=False)+"\n"
+            output=output+"FRETBOARD PARAMETERS:\n\n"+json.dumps(fretboard,indent=3,sort_keys=False)
+            # get current date and time
+            current_datetime = datetime.now()
+            # convert datetime obj to string
+            str_current_datetime = str(current_datetime)
+            str_current_datetime=str_current_datetime.replace(" ","")
+            # create a file object along with extension
+            filename = "./tmp/fretboard_"+str_current_datetime+".json"
+            outputfile = "fretboard_"+str_current_datetime+"_out"
 
+            with open(filename, 'w') as f:
+                f.write(json.dumps(fretboard,indent=3,sort_keys=False))
+                f.close()
+            link_pdf=web.ctx.home+"output/"+outputfile+".pdf"
+            output=output+link_pdf
+            print("Webs.py Executing python3 fretboard.py "+filename+" "+outputfile)
+            os.system("python3 fretboard.py "+filename+" "+outputfile)
+            print("Webs.py ok")
+            #print("./output/"+outputfile+".json")
+            # output=output+"\n\n\nFRETBOARD RESULT\n"+render_fretboard_output("./output/"+outputfile+".json")
 
-        # get current date and time
-        current_datetime = datetime.now()
-        print("Current date & time : ", current_datetime)
-
-        # convert datetime obj to string
-        str_current_datetime = str(current_datetime)
-        str_current_datetime=str_current_datetime.replace(" ","")
-        # create a file object along with extension
-        filename = "./tmp/fretboard_"+str_current_datetime+".json"
-        outputfile = "fretboard_"+str_current_datetime+"_out"
-
-        with open(filename, 'w') as f:
-            f.write(json.dumps(fretboard,indent=3,sort_keys=False))
-            f.close()
-        link_pdf=web.ctx.home+"output/"+outputfile+".pdf"
-        output=output+link_pdf
-        print("python3 fretboard.py "+filename+" "+outputfile)
-        os.system("python3 fretboard.py "+filename+" "+outputfile)
-        print("ok")
-        #print("./output/"+outputfile+".json")
-        # output=output+"\n\n\nFRETBOARD RESULT\n"+render_fretboard_output("./output/"+outputfile+".json")
-
-        return render_fretboard_output("./output/"+outputfile+".json", outputfile)
+            return render_fretboard_output("./output/"+outputfile+".json", outputfile)
+        except :
+            return "ops something did not work"
 
 if __name__ == "__main__":
     f = open("conf.json", 'r')

@@ -146,8 +146,8 @@ def calculate_strings(fretboard):
 
         zero_offset=zero_offset+space_between_strings_zero_line+((string*25.4)/2)
         n=n+1
-    print("last zero offset:"+str(zero_offset-space_between_strings_zero_line-((string*25.4)/2)))
-    print("right border:"+str(fretboard["right_border"]))
+#    print("last zero offset:"+str(zero_offset-space_between_strings_zero_line-((string*25.4)/2)))
+#    print("right border:"+str(fretboard["right_border"]))
     for offset in center_offsets:
         a = [fretboard["left_side"][0][0]+offset[0],0]
         b = [fretboard["left_side"][1][0]+offset[1],max(fretboard["scale_left"],fretboard["scale_right"])]
@@ -188,7 +188,21 @@ def calculate_frame(fretboard):
 
 
 def  generate_frame(msp,draw,fretboard):
-
+    ini_x=-110
+    ini_y=-50
+    draw.draw_line(msp,ini_x, ini_y, ini_x, ini_y+700)
+    # Dibuja las líneas de escala
+    for i in range(0, 701):
+        if i % 10 == 0:
+            if i % 100 == 0:
+            # Dibuja una línea larga cada 10 cm
+                draw.draw_line(msp,ini_x, ini_y+i, ini_x-30, ini_y+i)
+            else:
+                if i % 50 == 0:
+                # Dibuja una línea corta cada 5 cm
+                    draw.draw_line(msp,ini_x, ini_y+i, ini_x-20, ini_y+i)
+                else:
+                    draw.draw_line(msp,ini_x, ini_y+i, ini_x-10, ini_y+i)
     draw.draw_line_list(msp,fretboard["zero_line"],{"linetype":"DOT2"})
     draw.draw_line_list(msp,fretboard["bottom_line"],{"linetype":"DOT2"})
     #draw.add_text(msp,str(round(fretboard["bottom_line"][0][1],2))+" mm",(-100,fretboard["bottom_line"][0][1]), 'LEFT')
@@ -273,13 +287,13 @@ def calculate_frets(fretboard):
     number=int(fretboard["fret_perpenticular_to_centerline"])
     compensation=frets_left[number]-frets_right[number]
     fretboard["bridge_multiscale_compensation"]=compensation
-    print("compensation"+str(compensation))
+#    print("compensation"+str(compensation))
 
-    print("frets_right uncompensated"+str(frets_right))
+#    print("frets_right uncompensated"+str(frets_right))
     compensated_frets_right=[]
     for fret in frets_right:
         compensated_frets_right.append(fret+compensation)
-    print("frets_right compensated"+str(frets_right))
+#    print("frets_right compensated"+str(frets_right))
     fretboard["scale_positions"]=[frets_left,compensated_frets_right]
     fretboard=calculate_frets_segments(fretboard)
     return fretboard
@@ -434,7 +448,7 @@ def save_to_scale(fretboard,
 ):
     doc = make_doc(fretboard,offset=(1, 2), size=(6.5, 8))
     msp = doc.modelspace()
-    print("shit:"+str(MTextEntityAlignment.BOTTOM_LEFT))
+
     msp.add_mtext(
         "Fretboard Generator \nby Marc Alier 2022 \n"
         ,

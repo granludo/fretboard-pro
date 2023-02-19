@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Fretboard Generator</title>
+</head>
+<body>
+	<link href='http://fonts.googleapis.com/css?family=Bitter' rel='stylesheet' type='text/css'>
+	<style type="text/css">
+	body{
+
+	}
+	.form-style-10{
+		max-width:450px;
+		padding:30px;
+		margin:40px auto;
+		background: #FFF;
+		border-radius: 10px;
+		-webkit-border-radius:10px;
+		-moz-border-radius: 10px;
+		box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.13);
+		-moz-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.13);
+		-webkit-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.13);
+	}
+	.form-style-10 .inner-wrap{
+		padding: 30px;
+		background: #F8F8F8;
+		border-radius: 6px;
+		margin-bottom: 15px;
+	}
+	.form-style-10 h1{
+		background: #AD2200;
+		padding: 20px 30px 15px 30px;
+		margin: -30px -30px 30px -30px;
+		border-radius: 10px 10px 0 0;
+		-webkit-border-radius: 10px 10px 0 0;
+		-moz-border-radius: 10px 10px 0 0;
+		color: #fff;
+		text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.12);
+		font: normal 30px 'Bitter', serif;
+		-moz-box-shadow: inset 0px 2px 2px 0px rgba(255, 255, 255, 0.17);
+		-webkit-box-shadow: inset 0px 2px 2px 0px rgba(255, 255, 255, 0.17);
+		box-shadow: inset 0px 2px 2px 0px rgba(255, 255, 255, 0.17);
+		border: 1px solid #257C9E;
+	}
+	.form-style-10 h1 > span{
+		display: block;
+		margin-top: 2px;
+		font: 13px Arial, Helvetica, sans-serif;
+	}
+	.form-style-10 label{
+		display: block;
+		font: 13px Arial, Helvetica, sans-serif;
+		color: #888;
+		margin-bottom: 15px;
+	}
+	.form-style-10 input[type="text"],
+	.form-style-10 input[type="date"],
+	.form-style-10 input[type="datetime"],
+	.form-style-10 input[type="email"],
+	.form-style-10 input[type="number"],
+	.form-style-10 input[type="search"],
+	.form-style-10 input[type="time"],
+	.form-style-10 input[type="url"],
+	.form-style-10 input[type="password"],
+	.form-style-10 textarea,
+	.form-style-10 select {
+		display: block;
+		box-sizing: border-box;
+		-webkit-box-sizing: border-box;
+		-moz-box-sizing: border-box;
+		width: 100%;
+		padding: 8px;
+		border-radius: 6px;
+		-webkit-border-radius:6px;
+		-moz-border-radius:6px;
+		border: 2px solid #fff;
+		box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.33);
+		-moz-box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.33);
+		-webkit-box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.33);
+	}
+
+	.form-style-10 .section{
+		font: normal 20px 'Bitter', serif;
+		color: #2A88AD;
+		margin-bottom: 5px;
+	}
+	.form-style-10 .section span {
+		background: #2A88AD;
+		padding: 5px 10px 5px 10px;
+		position: absolute;
+		border-radius: 50%;
+		-webkit-border-radius: 50%;
+		-moz-border-radius: 50%;
+		border: 4px solid #fff;
+		font-size: 14px;
+		margin-left: -45px;
+		color: #fff;
+		margin-top: -3px;
+	}
+	.form-style-10 input[type="button"],
+	.form-style-10 input[type="submit"]{
+		background: #2A88AD;
+		padding: 8px 20px 8px 20px;
+		border-radius: 5px;
+		-webkit-border-radius: 5px;
+		-moz-border-radius: 5px;
+		color: #fff;
+		text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.12);
+		font: normal 30px 'Bitter', serif;
+		-moz-box-shadow: inset 0px 2px 2px 0px rgba(255, 255, 255, 0.17);
+		-webkit-box-shadow: inset 0px 2px 2px 0px rgba(255, 255, 255, 0.17);
+		box-shadow: inset 0px 2px 2px 0px rgba(255, 255, 255, 0.17);
+		border: 1px solid #257C9E;
+		font-size: 15px;
+	}
+	.form-style-10 input[type="button"]:hover,
+	.form-style-10 input[type="submit"]:hover{
+		background: #2A6881;
+		-moz-box-shadow: inset 0px 2px 2px 0px rgba(255, 255, 255, 0.28);
+		-webkit-box-shadow: inset 0px 2px 2px 0px rgba(255, 255, 255, 0.28);
+		box-shadow: inset 0px 2px 2px 0px rgba(255, 255, 255, 0.28);
+	}
+	.form-style-10 .privacy-policy{
+		float: right;
+		width: 250px;
+		font: 12px Arial, Helvetica, sans-serif;
+		color: #4D4D4D;
+		margin-top: 10px;
+		text-align: right;
+	}
+
+</style>
+
+
+
+
+
+<div class="form-style-10">
+	<h1>Fretboard Generator
+      <span>Fretboard designer for fretted string musical instruments. Guitar, bass, ukeleles, banjos and so on.</br>
+            (c)Marc Alier 2022 <a href="https://aprendizdeluthier.com/fretboard_generator">https://Aprendizdeluthier.com/fretboard_generator</a>
+
+	</h1>
+	<form class="form-style-10" action="http://127.0.0.1:1230" method="post" name="form_221024745073347" id="221024745073347" accept-charset="utf-8" autocomplete="on">
+			<div class="section"><span>!</span>Units en Milimeters</div>
+			<div class="inner-wrap">
+				<label>
+					All units are expressed in milimeters, except for string gauges wich are inches.
+				</label>
+			</div>
+
+			<div class="section"><span>1</span>Instrument name and scale(s)</div>
+			<div class="inner-wrap">
+        <label>
+          Instrument name
+        </label>
+        <input type="text" id="input_14" name="fretboard_name" data-type="input-textbox" class="form-textbox validate[required]" data-defaultvalue="My Instrument" style="width:310px" size="310" value="Mi instrumento" data-component="textbox" aria-labelledby="label_14" required="" />
+        <label>
+					Left Scale
+        </label>
+        <input type="number" id="input_16" name="scale_left" data-type="input-number" class=" form-number-input form-textbox validate[required]" data-defaultvalue="" style="width:150px" size="150" value="640" placeholder="" data-numbermin="150" data-numbermax="1000" data-component="number" aria-labelledby="label_16 sublabel_input_16" required="" step="any" />
+        <label>
+			 Right Scale (Leave at zero in case of single scale instrument (most cases)
+		 		</label>
+        <input type="number" id="input_17" name="scale_right" data-type="input-number" class=" form-number-input form-textbox" data-defaultvalue="" style="width:150px" size="150" value="0" placeholder="625" data-numbermin="0" data-numbermax="1000" data-component="number" aria-labelledby="label_17 sublabel_input_17" step="any" />
+				<label>
+         Number of frets
+        </label>
+        <input type="number" id="input_18" name="number_of_frets" data-type="input-number" class=" form-number-input form-textbox validate[required]" data-defaultvalue="22" style="width:150px" size="150" value="22" placeholder=" " data-numbermin="12" data-numbermax="28" data-component="number" aria-labelledby="label_18 sublabel_input_18" step="any" />
+				<label>Fret perpenticular to the center line on multiscale fretboards<label>
+					<input type="number" id="input_24" name="fret_perpenticular_to_centerline" data-type="input-number" class=" form-number-input form-textbox" data-defaultvalue="12" data-numbermin="0" data-numbermax="24"  style="width:310px" size="310" value="12" placeholder=" " data-component="number" aria-labelledby="label_24 sublabel_input_24" step="any" />
+				<label>
+				</div>
+			<div class="section"><span>2</span>Fretboard dimensions<br>
+			Nut, bridge and intonation<br>
+
+			</span></div>
+			<div class="inner-wrap">
+      		<label>
+						Width at nut
+					</label>
+					<input type="number" id="input_19" name="width_at_zero_line" data-type="input-number" class=" form-number-input form-textbox validate[required]" data-defaultvalue="43" style="width:150px" size="150" value="43.12" placeholder=" " data-numbermin="20" data-numbermax="150" data-component="number" aria-labelledby="label_19 sublabel_input_19" required="" step="any" />
+					<label>
+						Width at bridge
+					</label>
+					<input type="number" id="input_20" name="width_at_bottom_line" data-type="input-number" class=" form-number-input form-textbox validate[required]" data-defaultvalue="60" style="width:150px" size="150" value="60" placeholder=" " data-numbermin="25" data-numbermax="150" data-component="number" aria-labelledby="label_20 sublabel_input_20" required="" step="any" />
+					<label>
+						Left border width (from extreme to the center of the first string)
+					</label>
+					<input type="number" id="input_21" name="left_border" data-type="input-number" class=" form-number-input form-textbox" data-defaultvalue="" style="width:150px" size="150" value="3.5" placeholder=" " data-numbermin="0" data-numbermax="50" data-component="number" aria-labelledby="label_21 sublabel_input_21" required="" step="any" />
+					<label >
+						Right border width (from extreme to the center of the last string)
+					</label>
+					<input type="number" id="input_21a" name="right_border" data-type="input-number" class=" form-number-input form-textbox" data-defaultvalue="" style="width:150px" size="150" value="3.5" placeholder=" " data-numbermin="0" data-numbermax="50" data-component="number" aria-labelledby="label_21 sublabel_input_21" required="" step="any" />
+					<label>
+						Bridge intonation compensation on left side
+			</label>
+					<input type="number" id="input_26" name="intonation_compensation_left" data-type="input-number" class=" form-number-input form-textbox" data-defaultvalue="" style="width:150px" size="150" value="2" placeholder=" " data-numbermin="0" data-numbermax="10" data-component="number" aria-labelledby="label_26 sublabel_input_26" required="" step="any" />
+			<label class="form-label form-label-left form-label-auto" id="label_28" for="input_28">
+				Bridge intonation compensation on right side
+			</label>
+					<input type="number" id="input_28" name="intonation_compensation_right" data-type="input-number" class=" form-number-input form-textbox" data-defaultvalue="" style="width:150px" size="150" value="2" placeholder=" " data-numbermin="0" data-numbermax="10" data-component="number" aria-labelledby="label_28 sublabel_input_28" required="" step="any" />
+				</span>
+
+			</div>
+			<div class="section"><span>3</span>Strings<br>
+		 		String gauges (to calculate the nut (and bridge) slots
+			</span></div>
+			<div class="inner-wrap">
+				<label >
+Number of strings
+        </label>
+				<input type="number" id="input_29" name="number_of_strings" data-type="input-number" class=" form-number-input form-textbox validate[required]" data-defaultvalue="" style="width:150px" size="150" value="6" placeholder=" " data-numbermin="3" data-numbermax="" data-component="number" aria-labelledby="label_29" required="" step="any" />
+				<label>String gauge compensation at bridge  </label>
+				<input type="checkbox" aria-describedby="label_23" class="strings_set" id="input_23_1" name="bridge_spacing_compensated" value="Ancho de cuerda compensado en puente" />
+				<span>
+	      <label> Strings set </label>
+				<select name="Cordaje" id="cordaje">
+					<option value="default" > </option>
+  <option value="strings_e9s" >Electric0'09s</option>
+  <option value="strings_e10s" >Electric0'10s</option>
+	<option value="strings_e11s" >Electric0'11s</option>
+  <option value="strings_e12s" >Electric0'12s</option>
+
+	<option value="strings_a11s">Acustic 0'11s</option>
+	<option value="strings_a12s">Acustic 0'12s</option>
+	<option value="strings_a13s">Acustic 0'13s</option>
+  <option value="strings_classic">Clasic Guitar</option>
+  <option value="strings_flamenco">Flamenco Guitar</option>
+	<option value="strings_bass">Bass</option>
+	<option value="strings_bassthick">Thick Bass</option>
+	<option value="ukelele">Ukelele</option>
+	<option value="nylon">Nylon generic</option>
+</select>
+	<span>
+			</div>
+			<div class="button-section">
+	     <input type="submit" name="Enviar" />
+	     <span class="privacy-policy">
+	     <input type="checkbox" name="field7">
+			 I understand that the results may contain errors and that the service is provided without any guaranties.
+	     </span>
+	    </div>
+  </form>
+</div>
+
+</body>
+</html>
